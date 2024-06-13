@@ -8,6 +8,6 @@ export const tsup: Options = {
   splitting: false,
   clean: true,
   outDir: "dist",
-  sourcemap: "inline",
+  // sourcemap: "inline",
   cjsInterop: true,
 };

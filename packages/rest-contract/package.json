@@ -4,7 +4,7 @@
   "description": "ts-rest合约",
   "scripts": {
     "dev": "tsup src/* --watch",
-    "build:package": "tsup"
+    "build:@repo/rest-contract": "tsup"
   },
   "type": "module",
   "main": "./dist/index.cjs",

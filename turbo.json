@@ -2,11 +2,15 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "dev": {
-      "dependsOn": ["^build:package"],
+      "dependsOn": ["^build:@repo/drizzle", "^build:@repo/rest-contract"],
       "cache": false,
       "persistent": true
     },
-    "build:package": {
+    "build:@repo/drizzle": {
+      "cache": false
+    },
+    "build:@repo/rest-contract": {
+      "dependsOn": ["^build:@repo/drizzle"],
       "cache": false
     }
   }

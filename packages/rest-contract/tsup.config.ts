@@ -9,5 +9,5 @@ export const tsup: Options = {
   clean: true,
   outDir: "dist",
   sourcemap: "inline",
-  cjsInterop: true,
+  cjsInterop: true
 };

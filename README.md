@@ -13,3 +13,11 @@ bcrypt 构建报错
 ## 文档链接
 
 <https://tsup.egoist.dev/#what-can-it-bundle>
+
+<https://tsx.is/usage>
+
+<https://turbo.build/repo/docs/crafting-your-repository/managing-dependencies>
+
+<https://ts-rest.com/docs/nest/>
+
+<https://element-plus.org/zh-CN/component/select.html>
