@@ -1,0 +1,16 @@
+{
+  "name": "test-turbo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "turbo run dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@9.2.0",
+  "devDependencies": {
+    "turbo": "^2.0.3"
+  }
+}

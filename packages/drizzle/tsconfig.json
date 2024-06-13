@@ -1,0 +1,36 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist",
+
+    "declaration": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+
+    "sourceMap": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+
+    "noEmit": true,
+
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+
+    "lib": ["dom", "dom.iterable", "esnext"],
+
+    "paths": {
+      "~/*": ["./"],
+      "@/*": ["./src"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}
