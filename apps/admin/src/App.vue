@@ -2,8 +2,10 @@
 import HelloWorld from "./components/HelloWorld.vue";
 
 import { SystemStatusEnum } from "@repo/drizzle";
+import { contract } from "@repo/rest-contract";
 
 console.log("SystemStatusEnum--", SystemStatusEnum);
+console.log("contract--", contract);
 </script>
 
 <template>

@@ -15,6 +15,16 @@
         "require": "./dist/index.cjs",
         "import": "./dist/index.js"
       }
+    },
+    "./dist/schema": {
+      "types": {
+        "require": "./dist/schema/index.d.cts",
+        "default": "./dist/schema/index.d.ts"
+      },
+      "default": {
+        "require": "./dist/schema/index.cjs",
+        "import": "./dist/schema/index.js"
+      }
     }
   },
   "scripts": {
