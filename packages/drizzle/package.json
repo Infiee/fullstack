@@ -4,7 +4,7 @@
   "description": "drizzle包",
   "scripts": {
     "dev": "tsup src/* --watch",
-    "build:@repo/drizzle": "tsup src/*",
+    "build:package": "tsup",
     "db:migrate:deploy": "drizzle-kit migrate deploy",
     "db:migrate:dev": "drizzle-kit migrate dev",
     "db:push": "drizzle-kit push",
