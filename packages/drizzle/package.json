@@ -1,15 +1,25 @@
 {
   "name": "@repo/drizzle",
   "version": "0.0.1",
-  "description": "",
+  "description": "测试",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
+  "scripts": {
+    "dev:package": "tsup src/* --watch",
+    "pack": "tsup src/*",
+    "db:migrate:deploy": "drizzle-kit migrate deploy",
+    "db:migrate:dev": "drizzle-kit migrate dev",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "studio": "drizzle-kit studio --verbose",
+    "seed": "tsx kit/seed.ts"
+  },
   "exports": {
     ".": {
       "types": {
         "require": "./dist/index.d.cts",
-        "default": "./dist/index.d.ts"
+        "import": "./dist/index.d.ts"
       },
       "default": {
         "require": "./dist/index.cjs",
@@ -26,16 +36,6 @@
         "import": "./dist/schema/index.js"
       }
     }
-  },
-  "scripts": {
-    "build:@repo/drizzle": "tsup src/*",
-    "dev": "tsup src/* --watch",
-    "db:migrate:deploy": "drizzle-kit migrate deploy",
-    "db:migrate:dev": "drizzle-kit migrate dev",
-    "db:push": "drizzle-kit push",
-    "db:generate": "drizzle-kit generate",
-    "studio": "drizzle-kit studio --verbose",
-    "seed": "tsx kit/seed.ts"
   },
   "keywords": [],
   "author": "",

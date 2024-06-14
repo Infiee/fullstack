@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "description": "ts-rest合约",
   "scripts": {
-    "dev": "tsup src/* --watch",
-    "build:package": "tsup"
+    "dev:package": "tsup src/* --watch",
+    "pack": "tsup src/*"
   },
   "type": "module",
   "main": "./dist/index.cjs",
@@ -13,7 +13,7 @@
     ".": {
       "types": {
         "require": "./dist/index.d.cts",
-        "default": "./dist/index.d.ts"
+        "import": "./dist/index.d.ts"
       },
       "default": {
         "require": "./dist/index.cjs",

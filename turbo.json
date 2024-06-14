@@ -2,8 +2,14 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "dev": {
-      "cache": false,
-      "persistent": true
+      "cache": false
+    },
+    "pack": {
+      "dependsOn": ["^pack"],
+      "inputs": ["src/**/*", "packages/**/*", "*.js", "*.ts", "*.mts", "*.mjs"]
+    },
+    "dev:package": {
+      "cache": false
     }
   }
 }

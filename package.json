@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "turbo run dev"
+    "dev": "turbo run dev",
+    "dev:package": "turbo run dev:package"
   },
   "keywords": [],
   "author": "",

@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { SystemStatusEnum } from '@repo/drizzle';
-import { contract } from '@repo/rest-contract';
+// import { contract } from '@repo/rest-contract';
 
 @Controller()
 export class AppController {
@@ -12,5 +12,4 @@ export class AppController {
     // return this.appService.getHello();
     return SystemStatusEnum;
   }
-
 }
