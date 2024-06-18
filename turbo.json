@@ -2,12 +2,16 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "dev": {
-      "dependsOn": ["^build:package"],
       "cache": false,
       "persistent": true
     },
-    "build:package": {
-      "cache": false
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    "pack": {
+      "cache": false,
+      "outputs": ["dist"]
     }
   }
 }

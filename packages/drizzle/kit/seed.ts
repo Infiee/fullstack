@@ -4,7 +4,7 @@ import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import * as schema from "../src/schema";
 import { Menu, menuData, roleData, userData } from "./mock/data";
 import { getDb } from "./db";
-import { hashPassword } from "../src/utils/password";
+import {hashPassword} from './utils'
 
 type DB = NodePgDatabase<typeof schema>;
 

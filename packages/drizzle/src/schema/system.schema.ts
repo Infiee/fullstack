@@ -7,8 +7,8 @@ import {
   serial,
   text,
 } from "drizzle-orm/pg-core";
+import "zod";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
 import { baseStatusColumns, baseDateColumns } from "./base.schema";
 import { SystemMenuTypeEnum, SystemGenderEnum } from "../enum";
 
@@ -87,7 +87,7 @@ export const systemMenu = pgTable("system_menu", {
   isShow: boolean("is_show"),
   // 是否显示父级菜单
   isShowParent: boolean("is_show_parent"),
-  sort: integer('sort').notNull().default(0),
+  sort: integer("sort").notNull().default(0),
   ...baseStatusColumns,
 });
 
@@ -108,7 +108,7 @@ export const systemMenuToRole = pgTable(
 );
 
 /** 部门表 */
-export const systemDept = pgTable('system_dept', {
+export const systemDept = pgTable("system_dept", {
   id: serial("id").primaryKey(),
   roleName: text("role_name").notNull(),
   roleKey: text("role_key").notNull().unique(),

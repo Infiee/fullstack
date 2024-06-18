@@ -1,16 +1,37 @@
 {
-  "name": "test-turbo",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "monorepo",
+  "version": "0.0.1",
+  "description": "Nestjs的管理台",
   "scripts": {
-    "dev": "turbo run dev"
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "start": "turbo run start --no-cache"
   },
+  "devDependencies": {
+    "turbo": "^2.0.4"
+  },
+  "packageManager": "pnpm@9.4.0",
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@9.2.0",
-  "devDependencies": {
-    "turbo": "^2.0.3"
+  "pnpm": {
+    "allowedDeprecatedVersions": {
+      "are-we-there-yet": "*",
+      "sourcemap-codec": "*",
+      "domexception": "*",
+      "w3c-hr-time": "*",
+      "inflight": "*",
+      "npmlog": "*",
+      "rimraf": "*",
+      "stable": "*",
+      "gauge": "*",
+      "abab": "*",
+      "glob": "*"
+    },
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "eslint": "9"
+      }
+    }
   }
 }

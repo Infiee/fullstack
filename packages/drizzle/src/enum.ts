@@ -4,3 +4,11 @@ export const SystemStatusEnum = ["0", "1"] as const;
 export const SystemMenuTypeEnum = ["D", "M", "B"] as const;
 /** 性别（男 - M、女 - F） */
 export const SystemGenderEnum = ["M", "F"] as const;
+
+/** 系统状态枚举 */
+export enum SystemStatus {
+  /** 禁用 */
+  DISABLED = '0',
+  /** 启用 */
+  ENABLED = '1'
+}

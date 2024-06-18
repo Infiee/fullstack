@@ -1,7 +1,7 @@
 // import { Client } from 'pg';
 import pg from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
-import * as schema from "../src";
+import * as schema from "../src/schema";
 
 export const DB_PG_URL = "postgresql://postgres:root@localhost:5432/test";
 

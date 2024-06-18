@@ -1,0 +1,8 @@
+{
+  "restartable": "rs",
+  "watch": ["../../packages/**/src1/**/*"],
+  "ignore": ["dist"],
+  "delay": "1000",
+  "exec": "vite --force",
+  "ext": "ts js json"
+}

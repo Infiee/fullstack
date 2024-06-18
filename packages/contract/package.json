@@ -1,0 +1,22 @@
+{
+  "name": "@repo/contract",
+  "version": "1.0.0",
+  "description": "合约api",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ts-rest/core": "^3.45.2",
+    "i18next": "^23.11.4",
+    "@repo/drizzle": "workspace:^",
+    "typescript": "^5.4.5",
+    "zod": "^3.23.8",
+    "zod-i18n-map": "^2.27.0"
+  }
+}
