@@ -30,7 +30,6 @@ export const usePermissionStore = defineStore({
       this.wholeMenus = filterNoPermissionTree(
         filterTree(ascending(this.constantMenus.concat(routes)))
       );
-      console.log('this.wholeMenus-',this.wholeMenus)
       this.flatteningRoutes = formatFlatteningRoutes(
         this.constantMenus.concat(routes)
       );

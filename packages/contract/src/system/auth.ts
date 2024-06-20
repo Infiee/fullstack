@@ -1,6 +1,6 @@
 import { initContract } from "@ts-rest/core";
-import { z } from "zod";
-import { RouterMetadata } from "../common/common";
+import { ZodTypeAny, z } from "zod";
+import { RouterMetadata, apiResultSchema } from "../common/common";
 import { SystemRouteSchema } from "../common/route.schema";
 import { selectSystemUserSchema } from "@repo/drizzle";
 
@@ -26,8 +26,20 @@ export type SystemGetInfo = z.infer<typeof SystemGetInfoSchema>;
 
 export type SystemRouterItem = z.infer<typeof SystemRouteSchema>;
 
-// type SystemLoginResult = { accessToken: string };
-// type ErrorResult = { code: number; message: string };
+export const SystemLoginResultSchema = z
+  .object({
+    roles: z.string().array(),
+    accessToken: z.string(),
+    refreshToken: z.string(),
+    expires: z.string(),
+  })
+  .merge(
+    selectSystemUserSchema.pick({
+      avatar: true,
+      nickname: true,
+      username: true,
+    })
+  );
 
 export const systemAuth = c.router(
   {
@@ -36,11 +48,13 @@ export const systemAuth = c.router(
       method: "GET",
       path: "/captchaImage",
       responses: {
-        200: z.object({ img: z.string(), uuid: z.string() }),
-        // 400: z.object({
-        //   code: z.coerce.number().default(-1),
-        //   message: z.string(),
-        // }),
+        200: apiResultSchema(
+          z.object({
+            img: z.string(),
+            uuid: z.string(),
+            captcha: z.string().optional(),
+          })
+        ),
       },
       metadata,
       summary: "获取登录验证码",
@@ -51,12 +65,8 @@ export const systemAuth = c.router(
       path: "/login",
       body: SystemLoginSchema,
       responses: {
-        200: z.object({ accessToken: z.string() }),
+        200: apiResultSchema(SystemLoginResultSchema),
         // 200: c.type<SystemLoginResult>(),
-        // 400: z.object({
-        //   code: z.coerce.number().default(-1),
-        //   message: z.string(),
-        // }),
       },
       metadata,
       summary: "登录",
@@ -66,7 +76,7 @@ export const systemAuth = c.router(
       method: "GET",
       path: "/getInfo",
       responses: {
-        200: SystemGetInfoSchema,
+        200: apiResultSchema(SystemGetInfoSchema),
       },
       metadata,
       summary: "获取登录信息(用户、角色、权限)",
@@ -76,11 +86,21 @@ export const systemAuth = c.router(
       method: "GET",
       path: "/getRouters",
       responses: {
-        200: z.array(SystemRouteSchema),
-        // 200: z.any(),
+        200: apiResultSchema(z.array(SystemRouteSchema)),
       },
       metadata,
       summary: "获取登录用户路由信息",
+    },
+    // 刷新token
+    refreshToken: {
+      method: "POST",
+      path: "/refreshToken",
+      body: z.object({ refreshToken: z.string() }),
+      responses: {
+        200: apiResultSchema(z.any()),
+      },
+      metadata,
+      summary: "刷新token",
     },
   },
   {

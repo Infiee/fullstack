@@ -5,12 +5,12 @@ import {
   pgTable,
   primaryKey,
   serial,
+  smallint,
   text,
 } from "drizzle-orm/pg-core";
 import "zod";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { baseStatusColumns, baseDateColumns } from "./base.schema";
-import { SystemMenuTypeEnum, SystemGenderEnum } from "../enum";
 
 // const genderEnum = pgEnum('gender', SystemGenderEnum);
 
@@ -23,9 +23,12 @@ export const systemUser = pgTable("system_user", {
   password: text("password").notNull(),
   phone: text("phone").unique(),
   email: text("email").unique(),
-  gender: text("gender", { enum: SystemGenderEnum }),
+  // gender: text("gender", { enum: SystemGenderEnum }),
   // gender: genderEnum('gender'),
+  sex: smallint("sex").notNull(),
   remark: text("remark"),
+
+  deptId: integer("dept_id").references(() => systemDept.id),
 
   ...baseStatusColumns,
   ...baseDateColumns,
@@ -34,14 +37,80 @@ export const systemUser = pgTable("system_user", {
 /** 角色表 */
 export const systemRole = pgTable("system_role", {
   id: serial("id").primaryKey(),
-  roleName: text("role_name").notNull(),
-  roleKey: text("role_key").notNull().unique(),
+  // 角色名称
+  name: text("name").notNull(),
+  // 角色标识
+  code: text("code").notNull().unique(),
   remark: text("remark"),
   sort: integer("sort").notNull().default(0),
   ...baseStatusColumns,
 });
 
-/** 用户-角色表 */
+/** 菜单表 */
+export const systemMenu = pgTable("system_menu", {
+  id: serial("id").primaryKey(),
+  // parentId: integer('parent_id').default(0),
+  // id自引用
+  parentId: integer("parent_id").references((): AnyPgColumn => systemMenu.id),
+  title: text("title").notNull().unique(),
+  // menuType: text("menu_type", { enum: SystemMenuTypeEnum }).notNull(),
+  // 菜单类型（0代表菜单、1代表iframe、2代表外链、3代表按钮）
+  menuType: smallint("menu_type").notNull(),
+  // 权限标识
+  auths: text("permission_key"),
+  // 路由地址
+  path: text("path"),
+  // 路由名
+  name: text("name"),
+  // 组件地址
+  component: text("component"),
+  // 菜单icon
+  icon: text("icon"),
+  // 菜单右侧icon
+  extraIcon: text("extra-icon"),
+  // 重定向地址
+  redirect: text("redirect"),
+  // 进场动画
+  enterTransition: text("enter_transition"),
+  // 出场动画
+  leaveTransition: text("leave_transition"),
+  // 激活的菜单路径
+  activePath: text("active_path"),
+  // 外链地址
+  frameSrc: text("frame_src"),
+  // 外链动画
+  frameLoading: text("frame_loading"),
+  // 是否缓存
+  keepAlive: boolean("keepAlive"),
+  // 是否在菜单显示
+  showLink: boolean("showLink"),
+  // 是否显示父级菜单
+  showParent: boolean("showParent"),
+  // 固定标签页
+  fixedTag: boolean("fixedTag"),
+  // 隐藏标签页
+  hiddenTag: boolean("hiddenTag"),
+  // 排序
+  rank: integer("rank").notNull().default(0),
+  ...baseStatusColumns,
+});
+
+/** 部门表 */
+export const systemDept = pgTable("system_dept", {
+  id: serial("id").primaryKey(),
+  parentId: integer("parent_id").references((): AnyPgColumn => systemDept.id),
+  name: text("name").notNull(),
+  phone: text("phone"),
+  principal: text("principal"),
+  email: text("email"),
+  remark: text("remark"),
+  sort: smallint("sort").notNull().default(0),
+  type: smallint("sort").notNull(),
+  ...baseDateColumns,
+  ...baseStatusColumns,
+});
+
+/** 用户 - 角色表 */
 export const systemUserToRole = pgTable(
   "system_user_to_role",
   {
@@ -63,35 +132,7 @@ export const systemUserToRole = pgTable(
   })
 );
 
-/** 菜单表 */
-export const systemMenu = pgTable("system_menu", {
-  id: serial("id").primaryKey(),
-  // parentId: integer('parent_id').default(0),
-  // id自引用
-  parentId: integer("parent_id").references((): AnyPgColumn => systemMenu.id),
-  menuName: text("menu_name").notNull().unique(),
-  menuType: text("menu_type", { enum: SystemMenuTypeEnum }).notNull(),
-  menuIcon: text("menu_icon"),
-  // 权限标识
-  permissionKey: text("permission_key"),
-  // 路由地址
-  routerPath: text("router_path"),
-  routerName: text("router_name"),
-  // 组件地址
-  componentPath: text("component_path"),
-  // 重定向地址
-  redirect: text("redirect"),
-  // 是否缓存
-  isKeepAlive: boolean("is_keep_alive"),
-  // 是否在菜单显示
-  isShow: boolean("is_show"),
-  // 是否显示父级菜单
-  isShowParent: boolean("is_show_parent"),
-  sort: integer("sort").notNull().default(0),
-  ...baseStatusColumns,
-});
-
-/** 菜单-角色表 */
+/** 菜单 - 角色表 */
 export const systemMenuToRole = pgTable(
   "system_menu_to_role",
   {
@@ -107,15 +148,21 @@ export const systemMenuToRole = pgTable(
   })
 );
 
-/** 部门表 */
-export const systemDept = pgTable("system_dept", {
-  id: serial("id").primaryKey(),
-  roleName: text("role_name").notNull(),
-  roleKey: text("role_key").notNull().unique(),
-  remark: text("remark"),
-  sort: integer("sort").notNull().default(0),
-  ...baseStatusColumns,
-});
+/** 部门 - 角色表 */
+export const systemDeptToRole = pgTable(
+  "system_dept_to_role",
+  {
+    deptId: integer("dept_id")
+      .notNull()
+      .references(() => systemDept.id, { onDelete: "cascade" }),
+    roleId: integer("role_id")
+      .notNull()
+      .references(() => systemRole.id, { onDelete: "cascade" }),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.deptId, t.roleId] }),
+  })
+);
 
 /** 类型 */
 // 用户

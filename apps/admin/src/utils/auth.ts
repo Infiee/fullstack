@@ -6,9 +6,9 @@ export interface DataInfo<T> {
   /** token */
   accessToken: string;
   /** `accessToken`的过期时间（时间戳） */
-  expires?: T;
+  expires: T;
   /** 用于调用刷新accessToken的接口时所需的token */
-  refreshToken?: string;
+  refreshToken: string;
   /** 头像 */
   avatar?: string;
   /** 用户名 */
@@ -43,7 +43,7 @@ export function getToken(): DataInfo<number> {
  * 将`accessToken`、`expires`、`refreshToken`这三条信息放在key值为authorized-token的cookie里（过期自动销毁）
  * 将`avatar`、`username`、`nickname`、`roles`、`refreshToken`、`expires`这六条信息放在key值为`user-info`的localStorage里（利用`multipleTabsKey`当浏览器完全关闭后自动销毁）
  */
-export function setToken(data: DataInfo<Date>) {
+export function setToken(data: DataInfo<string>) {
   let expires = 0;
   const { accessToken, refreshToken } = data;
   const { isRemembered, loginDay } = useUserStoreHook();

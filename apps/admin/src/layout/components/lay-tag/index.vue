@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { $t } from "@/plugins/i18n";
 import { emitter } from "@/utils/mitt";
 import { RouteConfigs } from "../../types";
 import { useTags } from "../../hooks/useTag";
 import { routerArrays } from "@/layout/types";
 import { onClickOutside } from "@vueuse/core";
+import TagChrome from "./components/TagChrome.vue";
 import { handleAliveRoute, getTopMenu } from "@/router/utils";
 import { useSettingStoreHook } from "@/store/modules/settings";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
@@ -35,6 +37,7 @@ const {
   buttonLeft,
   showModel,
   translateX,
+  isFixedTag,
   pureSetting,
   activeIndex,
   getTabStyle,
@@ -48,6 +51,7 @@ const {
   onMounted,
   onMouseenter,
   onMouseleave,
+  transformI18n,
   onContentFullScreen
 } = useTags();
 
@@ -340,10 +344,10 @@ function onClickDrop(key, item, selectRoute?: RouteConfigs) {
       setTimeout(() => {
         if (pureSetting.hiddenSideBar) {
           tagsViews[6].icon = ExitFullscreen;
-          tagsViews[6].text = "内容区退出全屏";
+          tagsViews[6].text = $t("buttons.pureContentExitFullScreen");
         } else {
           tagsViews[6].icon = Fullscreen;
-          tagsViews[6].text = "内容区全屏";
+          tagsViews[6].text = $t("buttons.pureContentFullScreen");
         }
       }, 100);
       break;
@@ -563,6 +567,7 @@ onBeforeUnmount(() => {
     <div
       ref="scrollbarDom"
       class="scroll-container"
+      :class="showModel === 'chrome' && 'chrome-scroll-container'"
       @wheel.prevent="handleWheel"
     >
       <div ref="tabDom" class="tab select-none" :style="getTabStyle">
@@ -573,35 +578,54 @@ onBeforeUnmount(() => {
           :class="[
             'scroll-item is-closable',
             linkIsActive(item),
-            !isAllEmpty(item?.meta?.fixedTag) && 'fixed-tag'
+            showModel === 'chrome' && 'chrome-item',
+            isFixedTag(item) && 'fixed-tag'
           ]"
           @contextmenu.prevent="openMenu(item, $event)"
           @mouseenter.prevent="onMouseenter(index)"
           @mouseleave.prevent="onMouseleave(index)"
           @click="tagOnClick(item)"
         >
-          <span
-            class="tag-title dark:!text-text_color_primary dark:hover:!text-primary"
-          >
-            {{ item.meta.title }}
-          </span>
-          <span
-            v-if="
-              isAllEmpty(item?.meta?.fixedTag)
-                ? iconIsActive(item, index) ||
-                  (index === activeIndex && index !== 0)
-                : false
-            "
-            class="el-icon-close"
-            @click.stop="deleteMenu(item)"
-          >
-            <IconifyIconOffline :icon="Close" />
-          </span>
-          <span
-            v-if="showModel !== 'card'"
-            :ref="'schedule' + index"
-            :class="[scheduleIsActive(item)]"
-          />
+          <template v-if="showModel !== 'chrome'">
+            <span
+              class="tag-title dark:!text-text_color_primary dark:hover:!text-primary"
+            >
+              {{ transformI18n(item.meta.title) }}
+            </span>
+            <span
+              v-if="
+                isFixedTag(item)
+                  ? false
+                  : iconIsActive(item, index) ||
+                    (index === activeIndex && index !== 0)
+              "
+              class="el-icon-close"
+              @click.stop="deleteMenu(item)"
+            >
+              <IconifyIconOffline :icon="Close" />
+            </span>
+            <span
+              v-if="showModel !== 'card'"
+              :ref="'schedule' + index"
+              :class="[scheduleIsActive(item)]"
+            />
+          </template>
+          <div v-else class="chrome-tab">
+            <div class="chrome-tab__bg">
+              <TagChrome />
+            </div>
+            <span class="tag-title">
+              {{ transformI18n(item.meta.title) }}
+            </span>
+            <span
+              v-if="isFixedTag(item) ? false : index !== 0"
+              class="chrome-close-btn"
+              @click.stop="deleteMenu(item)"
+            >
+              <IconifyIconOffline :icon="Close" />
+            </span>
+            <span class="chrome-tab-divider" />
+          </div>
         </div>
       </div>
     </div>
@@ -624,7 +648,7 @@ onBeforeUnmount(() => {
         >
           <li v-if="item.show" @click="selectTag(key, item)">
             <IconifyIconOffline :icon="item.icon" />
-            {{ item.text }}
+            {{ transformI18n(item.text) }}
           </li>
         </div>
       </ul>
@@ -648,7 +672,7 @@ onBeforeUnmount(() => {
             :disabled="item.disabled"
           >
             <IconifyIconOffline :icon="item.icon" />
-            {{ item.text }}
+            {{ transformI18n(item.text) }}
           </el-dropdown-item>
         </el-dropdown-menu>
       </template>

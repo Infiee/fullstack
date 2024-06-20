@@ -1,73 +1,81 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
 import Motion from "./utils/motion";
 import { useRouter } from "vue-router";
 import { message } from "@/utils/message";
 import { loginRules } from "./utils/rule";
 import { useNav } from "@/layout/hooks/useNav";
 import type { FormInstance } from "element-plus";
+import { $t, transformI18n } from "@/plugins/i18n";
 import { useLayout } from "@/layout/hooks/useLayout";
 import { useUserStoreHook } from "@/store/modules/user";
 import { initRouter, getTopMenu } from "@/router/utils";
 import { bg, avatar, illustration } from "./utils/static";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { ref, reactive, toRaw, onMounted, onBeforeUnmount } from "vue";
+import { useTranslationLang } from "@/layout/hooks/useTranslationLang";
 import { useDataThemeChange } from "@/layout/hooks/useDataThemeChange";
 
 import dayIcon from "@/assets/svg/day.svg?component";
 import darkIcon from "@/assets/svg/dark.svg?component";
+import globalization from "@/assets/svg/globalization.svg?component";
 import Lock from "@iconify-icons/ri/lock-fill";
+import Check from "@iconify-icons/ep/check";
 import User from "@iconify-icons/ri/user-3-fill";
-
 import { client } from "@/utils/http/client";
 
 defineOptions({
   name: "Login"
 });
-
 const router = useRouter();
-const imgCode = ref("");
 const loading = ref(false);
 const ruleFormRef = ref<FormInstance>();
+const imgCode = ref("");
 
 const { initStorage } = useLayout();
 initStorage();
 
+const { t } = useI18n();
 const { dataTheme, overallStyle, dataThemeChange } = useDataThemeChange();
 dataThemeChange(overallStyle.value);
-const { title } = useNav();
+const { title, getDropdownItemStyle, getDropdownItemClass } = useNav();
+const { locale, translationCh, translationEn } = useTranslationLang();
 
 const ruleForm = reactive({
-  username: "xiaolv",
+  username: "admin",
   password: "admin123",
   code: "",
   uuid: ""
 });
 
 async function getVerifyCode() {
-  const { body } = await client.systemAuth.getCaptchaImage();
-  imgCode.value = body.img;
-  ruleForm.uuid = body.uuid;
+  const {
+    body: { data }
+  } = await client.systemAuth.getCaptchaImage();
+  imgCode.value = data.img;
+  ruleForm.uuid = data.uuid;
 }
 
 const onLogin = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
-  await formEl.validate(async (valid, fields) => {
+  await formEl.validate((valid, fields) => {
     if (valid) {
       loading.value = true;
-      try {
-        await useUserStoreHook().loginByUsername({ ...ruleForm });
-        loading.value = false;
-        // 获取后端路由
-        return initRouter().then(() => {
-          router.push(getTopMenu(true).path).then(() => {
-            message("登录成功", { type: "success" });
-          });
-        });
-      } catch (error) {
-        console.log(error);
-        getVerifyCode();
-        loading.value = false;
-      }
+      useUserStoreHook()
+        .loginByUsername(ruleForm)
+        .then(res => {
+          if (res.success) {
+            // 获取后端路由
+            return initRouter().then(() => {
+              router.push(getTopMenu(true).path).then(() => {
+                message(t("login.pureLoginSuccess"), { type: "success" });
+              });
+            });
+          } else {
+            message(t("login.pureLoginFail"), { type: "error" });
+          }
+        })
+        .finally(() => (loading.value = false));
     }
   });
 };
@@ -101,6 +109,38 @@ onBeforeUnmount(() => {
         :inactive-icon="darkIcon"
         @change="dataThemeChange"
       />
+      <!-- 国际化 -->
+      <el-dropdown trigger="click">
+        <globalization
+          class="hover:text-primary hover:!bg-[transparent] w-[20px] h-[20px] ml-1.5 cursor-pointer outline-none duration-300"
+        />
+        <template #dropdown>
+          <el-dropdown-menu class="translation">
+            <el-dropdown-item
+              :style="getDropdownItemStyle(locale, 'zh')"
+              :class="['dark:!text-white', getDropdownItemClass(locale, 'zh')]"
+              @click="translationCh"
+            >
+              <IconifyIconOffline
+                v-show="locale === 'zh'"
+                class="check-zh"
+                :icon="Check"
+              />
+              简体中文
+            </el-dropdown-item>
+            <el-dropdown-item
+              :style="getDropdownItemStyle(locale, 'en')"
+              :class="['dark:!text-white', getDropdownItemClass(locale, 'en')]"
+              @click="translationEn"
+            >
+              <span v-show="locale === 'en'" class="check-en">
+                <IconifyIconOffline :icon="Check" />
+              </span>
+              English
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
     </div>
     <div class="login-container">
       <div class="img">
@@ -124,7 +164,7 @@ onBeforeUnmount(() => {
                 :rules="[
                   {
                     required: true,
-                    message: '请输入账号',
+                    message: transformI18n($t('login.pureUsernameReg')),
                     trigger: 'blur'
                   }
                 ]"
@@ -133,7 +173,7 @@ onBeforeUnmount(() => {
                 <el-input
                   v-model="ruleForm.username"
                   clearable
-                  placeholder="账号"
+                  :placeholder="t('login.pureUsername')"
                   :prefix-icon="useRenderIcon(User)"
                 />
               </el-form-item>
@@ -145,7 +185,7 @@ onBeforeUnmount(() => {
                   v-model="ruleForm.password"
                   clearable
                   show-password
-                  placeholder="密码"
+                  :placeholder="t('login.purePassword')"
                   :prefix-icon="useRenderIcon(Lock)"
                 />
               </el-form-item>
@@ -160,7 +200,7 @@ onBeforeUnmount(() => {
                   :prefix-icon="useRenderIcon('ri:shield-keyhole-line')"
                 >
                   <template v-slot:append>
-                    <div @click="getVerifyCode" class="cursor-pointer">
+                    <div class="cursor-pointer" @click="getVerifyCode">
                       <img :src="imgCode" />
                     </div>
                   </template>
@@ -176,7 +216,7 @@ onBeforeUnmount(() => {
                 :loading="loading"
                 @click="onLogin(ruleFormRef)"
               >
-                登录
+                {{ t("login.pureLogin") }}
               </el-button>
             </Motion>
           </el-form>
@@ -193,5 +233,21 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 :deep(.el-input-group__append, .el-input-group__prepend) {
   padding: 0;
+}
+
+.translation {
+  ::v-deep(.el-dropdown-menu__item) {
+    padding: 5px 40px;
+  }
+
+  .check-zh {
+    position: absolute;
+    left: 20px;
+  }
+
+  .check-en {
+    position: absolute;
+    left: 20px;
+  }
 }
 </style>

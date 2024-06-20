@@ -1,15 +1,13 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 import {
+  apiResultSchema,
   basePaginationAndSortSchema,
   BaseStatusSchema,
   numericString,
   RouterMetadata,
 } from "../common/common";
-import {
-  insertSystemUserSchema,
-  selectSystemUserSchema,
-} from "@repo/drizzle";
+import { insertSystemUserSchema, selectSystemUserSchema } from "@repo/drizzle";
 
 const c = initContract();
 const metadata = {
@@ -32,21 +30,23 @@ export const systemUser = c.router(
       path: "/user",
       body: insertSystemUserSchema,
       responses: {
-        201: selectSystemUserSchema.omit({ password: true }),
+        201: apiResultSchema(selectSystemUserSchema.omit({ password: true })),
       },
       metadata,
       summary: "创建系统用户",
     },
-    // 获取所有用户
-    getAll: {
+    // 筛选所有用户
+    filterAll: {
       method: "GET",
       path: "/user",
       query: filterUserSchema,
       responses: {
-        200: z.object({
-          list: selectSystemUserSchema.omit({ password: true }).array(),
-          count: z.number(),
-        }),
+        200: apiResultSchema(
+          z.object({
+            list: selectSystemUserSchema.omit({ password: true }).array(),
+            count: z.number(),
+          })
+        ),
       },
       metadata,
       summary: "获取所有系统用户",
@@ -57,7 +57,7 @@ export const systemUser = c.router(
       path: "/user/:id",
       pathParams: z.object({ id: numericString(z.number()) }),
       responses: {
-        200: selectSystemUserSchema.omit({ password: true }),
+        200: apiResultSchema(selectSystemUserSchema.omit({ password: true })),
       },
       metadata,
       summary: "根据id获取某个系统用户",
@@ -69,7 +69,7 @@ export const systemUser = c.router(
       pathParams: z.object({ id: numericString(z.number()) }),
       body: insertSystemUserSchema.omit({ password: true }).partial(),
       responses: {
-        200: selectSystemUserSchema.omit({ password: true }),
+        200: apiResultSchema(selectSystemUserSchema.omit({ password: true })),
       },
       metadata,
       summary: "更新某个系统用户",
@@ -81,8 +81,7 @@ export const systemUser = c.router(
       pathParams: z.object({ id: numericString(z.number()) }),
       body: z.any(),
       responses: {
-        // 204: z.any(),
-        200: selectSystemUserSchema.omit({ password: true }),
+        200: apiResultSchema(selectSystemUserSchema.omit({ password: true })),
       },
       metadata,
       summary: "删除某个系统用户",
@@ -96,7 +95,7 @@ export const systemUser = c.router(
         roleIds: z.array(z.coerce.number()),
       }),
       responses: {
-        200: z.object({ message: z.string() }),
+        200: apiResultSchema(z.null()),
       },
       metadata,
       summary: "用户分配角色",
@@ -108,7 +107,7 @@ export const systemUser = c.router(
       pathParams: z.object({ id: numericString(z.number()) }),
       body: insertSystemUserSchema.pick({ password: true }),
       responses: {
-        200: z.object({ message: z.string() }),
+        200: apiResultSchema(z.null()),
       },
       metadata,
       summary: "重置某个系统用户的密码",
@@ -119,7 +118,7 @@ export const systemUser = c.router(
       path: "/user/:id/getRoleIds",
       pathParams: z.object({ id: numericString(z.number()) }),
       responses: {
-        200: z.array(z.coerce.number()),
+        200: apiResultSchema(z.number().array()),
       },
       metadata,
       summary: "获取某个系统用户的角色关系id",

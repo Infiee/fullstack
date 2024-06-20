@@ -4,6 +4,7 @@ import {
   BasePaginationSchema,
   BaseStatusSchema,
   RouterMetadata,
+  apiResultSchema,
   basePaginationAndSortSchema,
   numericString,
 } from "../common/common";
@@ -41,7 +42,7 @@ export const systemRole = c.router(
       path: "/role",
       body: systemRoleSchema.omit({ id: true }),
       responses: {
-        201: selectSystemRoleSchema,
+        201: apiResultSchema(selectSystemRoleSchema),
       },
       metadata,
       summary: "创建系统角色",
@@ -51,7 +52,7 @@ export const systemRole = c.router(
       method: "GET",
       path: "/role",
       responses: {
-        200: selectSystemRoleSchema.array(),
+        200: apiResultSchema(selectSystemRoleSchema.array()),
       },
       metadata,
       summary: "获取所有系统角色",
@@ -62,7 +63,7 @@ export const systemRole = c.router(
       path: "/role/:id",
       pathParams: z.object({ id: numericString(z.number()) }),
       responses: {
-        200: selectSystemRoleSchema,
+        200: apiResultSchema(selectSystemRoleSchema),
       },
       metadata,
       summary: "获取某个系统角色",
@@ -74,7 +75,7 @@ export const systemRole = c.router(
       pathParams: z.object({ id: numericString(z.number()) }),
       body: systemRoleSchema.omit({ id: true }).partial(),
       responses: {
-        200: selectSystemRoleSchema,
+        200: apiResultSchema(selectSystemRoleSchema),
       },
       metadata,
       summary: "更新某个系统角色",
@@ -86,7 +87,7 @@ export const systemRole = c.router(
       pathParams: z.object({ id: numericString(z.number()) }),
       body: z.any(),
       responses: {
-        204: z.object({}),
+        200: apiResultSchema(z.object({})),
       },
       metadata,
       summary: "删除某个系统角色",
@@ -100,9 +101,7 @@ export const systemRole = c.router(
         userIds: z.array(z.coerce.number()),
       }),
       responses: {
-        201: z.object({
-          message: z.string(),
-        }),
+        200: apiResultSchema(z.any()),
       },
       metadata,
       summary: "角色分配用户",
@@ -116,9 +115,7 @@ export const systemRole = c.router(
         menuIds: z.array(z.coerce.number()),
       }),
       responses: {
-        201: z.object({
-          message: z.string(),
-        }),
+        200: apiResultSchema(z.any()),
       },
       metadata,
       summary: "角色分配菜单",
@@ -129,10 +126,12 @@ export const systemRole = c.router(
       path: "/role/filter",
       query: filterRoleSchema,
       responses: {
-        200: z.object({
-          list: selectSystemRoleSchema.array(),
-          count: z.number(),
-        }),
+        200: apiResultSchema(
+          z.object({
+            list: selectSystemRoleSchema.array(),
+            count: z.number(),
+          })
+        ),
       },
       metadata,
       summary: "获取所有系统角色",
@@ -143,7 +142,7 @@ export const systemRole = c.router(
       path: "/role/:id/roleMenu",
       pathParams: z.object({ id: numericString(z.number()) }),
       responses: {
-        200: selectSystemMenuSchema.array(),
+        200: apiResultSchema(selectSystemMenuSchema.array()),
       },
       metadata,
       summary: "获取菜单、角色",
@@ -154,7 +153,7 @@ export const systemRole = c.router(
       path: "/role/:id/roleMenuIds",
       pathParams: z.object({ id: numericString(z.number()) }),
       responses: {
-        200: z.number().array(),
+        200: apiResultSchema(z.number().array()),
       },
       metadata,
       summary: "获取菜单、角色关系id",

@@ -7,23 +7,9 @@ import {
   routerArrays,
   storageLocal
 } from "../utils";
-import { type RefreshTokenResult, refreshTokenApi } from "@/api/user";
+import { type RefreshTokenResult, getLogin, refreshTokenApi } from "@/api/user";
 import { useMultiTagsStoreHook } from "./multiTags";
 import { type DataInfo, setToken, removeToken, userKey } from "@/utils/auth";
-
-import { type ClientInferResponseBody, client } from "@/utils/http/client";
-import type { contract } from "@repo/contract";
-import type { ClientInferRequest } from "@ts-rest/core";
-
-type GetLoginRequest = ClientInferRequest<typeof contract.systemAuth.login>;
-type LoginResult = ClientInferResponseBody<
-  typeof contract.systemAuth.login,
-  200
->;
-type InfoResult = ClientInferResponseBody<
-  typeof contract.systemAuth.getInfo,
-  200
->;
 
 export const useUserStore = defineStore({
   id: "pure-user",
@@ -67,32 +53,16 @@ export const useUserStore = defineStore({
       this.loginDay = Number(value);
     },
     /** 登入 */
-    async loginByUsername(data: GetLoginRequest["body"]) {
-      return new Promise<LoginResult & InfoResult>(async (resolve, reject) => {
-        try {
-          const { body: loginBody } = await client.systemAuth.login({
-            body: { ...data }
+    async loginByUsername(data) {
+      return new Promise((resolve, reject) => {
+        getLogin(data)
+          .then(data => {
+            if (data?.success) setToken(data.data);
+            resolve(data);
+          })
+          .catch(error => {
+            reject(error);
           });
-          setToken({ accessToken: loginBody.accessToken });
-          const { body: infoBody } = await client.systemAuth.getInfo();
-          setToken({
-            ...infoBody.user,
-            roles: infoBody.roles,
-            accessToken: loginBody.accessToken
-          });
-          resolve({ ...loginBody, ...infoBody });
-        } catch (error) {
-          reject(error);
-        }
-
-        // getLogin(data)
-        //   .then(data => {
-        //     if (data?.success) setToken(data.data);
-        //     resolve(data);
-        //   })
-        //   .catch(error => {
-        //     reject(error);
-        //   });
       });
     },
     /** 前端登出（不调用接口） */
@@ -111,7 +81,7 @@ export const useUserStore = defineStore({
           .then(data => {
             if (data) {
               setToken(data.data);
-              resolve(data);
+              resolve(data.data);
             }
           })
           .catch(error => {

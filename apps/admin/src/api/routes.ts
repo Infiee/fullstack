@@ -1,10 +1,8 @@
-import { http } from "@/utils/http";
+// import { http } from "@/utils/http";
+import { client } from "@/utils/http/client";
 
-type Result = {
-  success: boolean;
-  data: Array<any>;
-};
-
-export const getAsyncRoutes = () => {
-  return http.request<Result>("get", "/get-async-routes");
+export const getAsyncRoutes = async () => {
+  // return http.request<Result>("get", "/get-async-routes");
+  const { body } = await client.systemAuth.getRouters();
+  return body;
 };

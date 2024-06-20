@@ -1,4 +1,4 @@
-import { integer, text, timestamp } from 'drizzle-orm/pg-core';
+import { integer, smallint, text, timestamp } from 'drizzle-orm/pg-core';
 import { SystemStatusEnum } from '../enum';
 
 export const baseDateColumns = {
@@ -18,5 +18,6 @@ export const baseDateColumns = {
 };
 
 export const baseStatusColumns = {
-  status: text('status', { enum: SystemStatusEnum }).notNull(),
+  // status: text('status', { enum: SystemStatusEnum }).notNull(),
+  status: smallint("status").notNull(),
 };

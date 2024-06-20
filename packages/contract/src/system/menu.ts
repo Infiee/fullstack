@@ -1,10 +1,11 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import { RouterMetadata } from "../common/common";
 import {
-  insertSystemMenuSchema,
-  selectSystemMenuSchema,
-} from "@repo/drizzle";
+  RouterMetadata,
+  apiResultSchema,
+  numericString,
+} from "../common/common";
+import { insertSystemMenuSchema, selectSystemMenuSchema } from "@repo/drizzle";
 
 const c = initContract();
 const metadata = {
@@ -19,7 +20,7 @@ export const systemMenu = c.router(
       path: "/menu",
       body: insertSystemMenuSchema.omit({ id: true }),
       responses: {
-        201: selectSystemMenuSchema,
+        201: apiResultSchema(selectSystemMenuSchema),
       },
       metadata,
       summary: "创建系统菜单",
@@ -29,7 +30,7 @@ export const systemMenu = c.router(
       method: "GET",
       path: "/menu",
       responses: {
-        200: selectSystemMenuSchema.array(),
+        200: apiResultSchema(z.array(selectSystemMenuSchema)),
       },
       metadata,
       summary: "获取所有系统菜单",
@@ -38,11 +39,9 @@ export const systemMenu = c.router(
     getOne: {
       method: "GET",
       path: "/menu/:id",
-      pathParams: z.object({
-        id: z.coerce.number(),
-      }),
+      pathParams: z.object({ id: numericString(z.number()) }),
       responses: {
-        200: selectSystemMenuSchema,
+        200: apiResultSchema(selectSystemMenuSchema),
       },
       metadata,
       summary: "获取某个系统菜单",
@@ -51,12 +50,10 @@ export const systemMenu = c.router(
     update: {
       method: "PATCH",
       path: "/menu/:id",
-      pathParams: z.object({
-        id: z.coerce.number(),
-      }),
+      pathParams: z.object({ id: numericString(z.number()) }),
       body: insertSystemMenuSchema.omit({ id: true }).partial(),
       responses: {
-        200: selectSystemMenuSchema,
+        200: apiResultSchema(selectSystemMenuSchema),
       },
       metadata,
       summary: "更新某个系统菜单",
@@ -65,12 +62,10 @@ export const systemMenu = c.router(
     remove: {
       method: "DELETE",
       path: "/menu/:id",
-      pathParams: z.object({
-        id: z.coerce.number(),
-      }),
+      pathParams: z.object({ id: numericString(z.number()) }),
       body: z.any(),
       responses: {
-        204: z.object({}),
+        200: apiResultSchema(z.any()),
       },
       metadata,
       summary: "删除某个系统菜单",

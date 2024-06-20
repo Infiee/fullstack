@@ -27,8 +27,7 @@ const IFrame = () => import("@/layout/frame.vue");
 const modulesRoutes = import.meta.glob("/src/views/**/*.{vue,tsx}");
 
 // 动态路由
-// import { getAsyncRoutes } from "@/api/routes";
-import { client } from "@/utils/http/client";
+import { getAsyncRoutes } from "@/api/routes";
 
 function handRank(routeInfo: any) {
   const { name, path, parentId, meta } = routeInfo;
@@ -92,8 +91,6 @@ function filterNoPermissionTree(data: RouteComponent[]) {
   newTree.forEach(
     (v: any) => v.children && (v.children = filterNoPermissionTree(v.children))
   );
-  console.log("newTree1--", newTree);
-
   return filterChildrenTree(newTree);
 }
 
@@ -194,11 +191,6 @@ function handleAsyncRoutes(routeList) {
 
 /** 初始化路由（`new Promise` 写法防止在异步请求中造成无限循环）*/
 function initRouter() {
-  const getAsyncRouter = async () => {
-    const { body } = await client.systemAuth.getRouters();
-    return { data: body };
-  };
-
   if (getConfig()?.CachingAsyncRoutes) {
     // 开启动态路由缓存本地localStorage
     const key = "async-routes";
@@ -210,7 +202,7 @@ function initRouter() {
       });
     } else {
       return new Promise(resolve => {
-        getAsyncRouter().then(({ data }) => {
+        getAsyncRoutes().then(({ data }) => {
           handleAsyncRoutes(cloneDeep(data));
           storageLocal().setItem(key, data);
           resolve(router);
@@ -219,7 +211,7 @@ function initRouter() {
     }
   } else {
     return new Promise(resolve => {
-      getAsyncRouter().then(({ data }) => {
+      getAsyncRoutes().then(({ data }) => {
         handleAsyncRoutes(cloneDeep(data));
         resolve(router);
       });

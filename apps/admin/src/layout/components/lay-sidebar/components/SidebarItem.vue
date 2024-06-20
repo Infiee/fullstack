@@ -4,6 +4,7 @@ import { getConfig } from "@/config";
 import { menuType } from "@/layout/types";
 import { ReText } from "@/components/ReText";
 import { useNav } from "@/layout/hooks/useNav";
+import { transformI18n } from "@/plugins/i18n";
 import SidebarLinkItem from "./SidebarLinkItem.vue";
 import SidebarExtraIcon from "./SidebarExtraIcon.vue";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
@@ -144,9 +145,9 @@ function resolvePath(routePath) {
             item?.pathList?.length === 2)
         "
         truncated
-        class="!w-full !px-4 !text-inherit"
+        class="!w-full !pl-4 !text-inherit"
       >
-        {{ onlyOneChild.meta.title }}
+        {{ transformI18n(onlyOneChild.meta.title) }}
       </el-text>
 
       <template #title>
@@ -158,7 +159,7 @@ function resolvePath(routePath) {
             }"
             class="!w-full !text-inherit"
           >
-            {{ onlyOneChild.meta.title }}
+            {{ transformI18n(onlyOneChild.meta.title) }}
           </ReText>
           <SidebarExtraIcon :extraIcon="onlyOneChild.meta.extraIcon" />
         </div>
@@ -198,14 +199,14 @@ function resolvePath(routePath) {
         :class="{
           '!w-full': true,
           '!text-inherit': true,
-          '!px-4':
+          '!pl-4':
             layout !== 'horizontal' &&
             isCollapse &&
             !toRaw(item.meta.icon) &&
             item.parentId === null
         }"
       >
-        {{ item.meta.title }}
+        {{ transformI18n(item.meta.title) }}
       </ReText>
       <SidebarExtraIcon v-if="!isCollapse" :extraIcon="item.meta.extraIcon" />
     </template>

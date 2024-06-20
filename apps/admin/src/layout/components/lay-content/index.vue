@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
 import LayFrame from "../lay-frame/index.vue";
 import LayFooter from "../lay-footer/index.vue";
+import { useTags } from "@/layout/hooks/useTag";
 import { useGlobal, isNumber } from "@pureadmin/utils";
 import BackTopIcon from "@/assets/svg/back_top.svg?component";
 import { h, computed, Transition, defineComponent } from "vue";
@@ -10,6 +12,8 @@ const props = defineProps({
   fixedHeader: Boolean
 });
 
+const { t } = useI18n();
+const { showModel } = useTags();
 const { $storage, $config } = useGlobal<GlobalPropertiesApi>();
 
 const isKeepAlive = computed(() => {
@@ -49,9 +53,17 @@ const getMainWidth = computed(() => {
 const getSectionStyle = computed(() => {
   return [
     hideTabs.value && layout ? "padding-top: 48px;" : "",
-    !hideTabs.value && layout ? "padding-top: 81px;" : "",
+    !hideTabs.value && layout
+      ? showModel.value == "chrome"
+        ? "padding-top: 85px;"
+        : "padding-top: 81px;"
+      : "",
     hideTabs.value && !layout.value ? "padding-top: 48px;" : "",
-    !hideTabs.value && !layout.value ? "padding-top: 81px;" : "",
+    !hideTabs.value && !layout.value
+      ? showModel.value == "chrome"
+        ? "padding-top: 85px;"
+        : "padding-top: 81px;"
+      : "",
     props.fixedHeader
       ? ""
       : `padding-top: 0;${
@@ -121,7 +133,7 @@ const transitionMain = defineComponent({
               }"
             >
               <el-backtop
-                title="回到顶部"
+                :title="t('buttons.pureBackTop')"
                 target=".app-main .el-scrollbar__wrap"
               >
                 <BackTopIcon />

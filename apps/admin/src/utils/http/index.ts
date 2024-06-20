@@ -134,11 +134,7 @@ class PureHttp {
           return response.data;
         }
 
-        // 增加message显示
-        // const data = response.data;
-        // console.log("data--", data);
-        // return data;
-
+        // return response.data;
         return response;
       },
       (error: PureHttpError) => {
@@ -147,7 +143,7 @@ class PureHttp {
         // 关闭进度条动画
         NProgress.done();
 
-        // 增加message显示
+        // TODO: 增加message显示
         const data: any = error.response?.data;
         message(data?.message || error.message, {
           type: "error",

@@ -1,4 +1,4 @@
-<h1>vue-pure-admin精简版（非国际化版本）</h1>
+<h1>vue-pure-admin精简版（国际化版本）</h1>
 
 [![license](https://img.shields.io/github/license/pure-admin/vue-pure-admin.svg)](LICENSE)
 
@@ -10,7 +10,15 @@
 
 ## 版本选择
 
-当前是非国际化版本，如果您需要国际化版本 [请点击](https://github.com/pure-admin/pure-admin-thin/tree/i18n)
+当前是国际化版本，如果您需要非国际化版本 [请点击](https://github.com/pure-admin/pure-admin-thin)
+
+## `js` 版本
+
+[点我查看 js 版本](https://pure-admin.github.io/pure-admin-doc/pages/js/)
+
+## `max` 版本
+
+[点我查看 max 版本](https://github.com/pure-admin/vue-pure-admin-max)
 
 ## 配套视频
 
@@ -29,3 +37,15 @@
 ## 预览
 
 [查看预览](https://pure-admin-thin.netlify.app/#/login)
+
+## 维护者
+
+[xiaoxian521](https://github.com/xiaoxian521)
+
+## ⚠️ 注意
+
+精简版不接受任何 `issues` 和 `pr`，如果有问题请到完整版 [issues](https://github.com/pure-admin/vue-pure-admin/issues/new/choose) 去提，谢谢！
+
+## 许可证
+
+[MIT © 2020-present, pure-admin](./LICENSE)

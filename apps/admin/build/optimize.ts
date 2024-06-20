@@ -10,6 +10,7 @@ const include = [
   "dayjs",
   "axios",
   "pinia",
+  "vue-i18n",
   "vue-types",
   "js-cookie",
   "vue-tippy",
@@ -17,10 +18,7 @@ const include = [
   "sortablejs",
   "@vueuse/core",
   "@pureadmin/utils",
-  "responsive-storage",
-  // TODO: 由于加载的是commonjs，这里用vite预编译为esm模块
-  "@repo/drizzle",
-  "@repo/contract"
+  "responsive-storage"
 ];
 
 /**

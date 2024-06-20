@@ -3,7 +3,7 @@ import pg from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
 import * as schema from "../src/schema";
 
-export const DB_PG_URL = "postgresql://postgres:root@localhost:5432/test";
+export const DB_PG_URL = "postgresql://postgres:root@localhost:5432/admin";
 
 const { Client } = pg
 
