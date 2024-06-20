@@ -187,6 +187,12 @@ export type SelectSystemMenu = typeof systemMenu.$inferSelect;
 export const insertSystemMenuSchema = createInsertSchema(systemMenu);
 export const selectSystemMenuSchema = createSelectSchema(systemMenu);
 
+// 部门
+export type InsertSystemDept = typeof systemDept.$inferInsert;
+export type SelectSystemDept = typeof systemDept.$inferSelect;
+export const insertSystemDeptSchema = createInsertSchema(systemDept);
+export const selectSystemDeptSchema = createSelectSchema(systemDept);
+
 // 测试
 // import { pgEnum } from 'drizzle-orm/pg-core';
 // export const enableEnum = pgEnum('enable', ['NORMAL', 'DISABLE']);

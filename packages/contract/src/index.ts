@@ -4,9 +4,10 @@ export * from "./system/user";
 export * from "./system/role";
 export * from "./system/menu";
 export * from "./system/auth";
+export * from "./system/dept";
 
 import { initContract } from "@ts-rest/core";
-import { systemUser, systemRole, systemMenu, systemAuth } from ".";
+import { systemUser, systemRole, systemMenu, systemAuth, systemDept } from ".";
 
 import { setErrorMap } from "./common/custom-zod-error";
 import { z } from "zod";
@@ -19,6 +20,7 @@ export const contract = c.router(
     systemUser,
     systemRole,
     systemMenu,
+    systemDept,
   },
   {
     pathPrefix: "/api",

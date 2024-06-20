@@ -31,7 +31,7 @@ export const SystemLoginResultSchema = z
     roles: z.string().array(),
     accessToken: z.string(),
     refreshToken: z.string(),
-    expires: z.string(),
+    expires: z.number(),
   })
   .merge(
     selectSystemUserSchema.pick({

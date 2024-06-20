@@ -2,9 +2,7 @@ import { SystemStatusEnum } from "@repo/drizzle";
 import { ZodNumber, ZodTypeAny, z } from "zod";
 
 /** api result */
-export const apiResultSchema = <T extends ZodTypeAny>(
-  dataSchema: T
-) => {
+export const apiResultSchema = <T extends ZodTypeAny>(dataSchema: T) => {
   return z.object({
     success: z.boolean(),
     data: dataSchema,
@@ -30,7 +28,7 @@ export const BaseSortSchema = z.object({
 /** 基础状态参数 */
 export const BaseStatusSchema = z.object({
   // status: z.enum(SystemStatusEnum).nullish(),
-  status: z.nativeEnum(SystemStatusEnum),
+  status: z.nativeEnum(SystemStatusEnum).optional(),
 });
 /** 基础分页加排序schema */
 export const basePaginationAndSortSchema =
