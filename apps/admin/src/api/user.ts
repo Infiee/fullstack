@@ -50,7 +50,3 @@ export const refreshTokenApi = async (
   const { body } = await client.systemAuth.refreshToken({ body: data });
   return body;
 };
-
-// export const refreshTokenApi = (data?: object) => {
-//   return http.request<RefreshTokenResult>("post", "/refresh-token", { data });
-// };

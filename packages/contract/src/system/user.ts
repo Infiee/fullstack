@@ -43,8 +43,20 @@ export const systemUser = c.router(
       responses: {
         200: apiResultSchema(
           z.object({
-            list: selectSystemUserSchema.omit({ password: true }).array(),
-            count: z.number(),
+            list: selectSystemUserSchema
+              .omit({ password: true })
+              .merge(
+                z.object({
+                  dept: z
+                    .object({
+                      id: z.number(),
+                      name: z.string(),
+                    })
+                    .nullish(),
+                })
+              )
+              .array(),
+            total: z.number(),
           })
         ),
       },

@@ -7,9 +7,9 @@ interface FormItemProps {
   nickname: string;
   username: string;
   password: string;
-  phone: string | number;
+  phone: string;
   email: string;
-  sex: string | number;
+  sex: number;
   status: number;
   dept?: {
     id?: number;
@@ -17,6 +17,7 @@ interface FormItemProps {
   };
   remark: string;
 }
+
 interface FormProps {
   formInline: FormItemProps;
 }
@@ -27,7 +28,7 @@ interface RoleFormItemProps {
   /** 角色列表 */
   roleOptions: any[];
   /** 选中的角色列表 */
-  ids: Record<number, unknown>[];
+  ids: number[];
 }
 interface RoleFormProps {
   formInline: RoleFormItemProps;

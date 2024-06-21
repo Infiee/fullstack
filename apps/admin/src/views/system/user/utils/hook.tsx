@@ -21,7 +21,12 @@ import {
   getRoleIds,
   getDeptList,
   getUserList,
-  getAllRoleList
+  getAllRoleList,
+  createUser,
+  updateUser,
+  resetUserPassword,
+  assignRole,
+  deleteUser
 } from "@/api/system";
 import {
   ElForm,
@@ -113,7 +118,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
           type={row.sex === 1 ? "danger" : null}
           effect="plain"
         >
-          {row.sex === 1 ? "女" : "男"}
+          {row.sex !== null ? (row.sex === 1 ? "女" : "男") : "未知"}
         </el-tag>
       )
     },
@@ -209,18 +214,21 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
             loading: true
           }
         );
-        setTimeout(() => {
-          switchLoadMap.value[index] = Object.assign(
-            {},
-            switchLoadMap.value[index],
-            {
-              loading: false
-            }
-          );
-          message("已成功修改用户状态", {
-            type: "success"
+        updateUser(row.id, { status: row.status })
+          .then(() => {
+            message("已成功修改用户状态", {
+              type: "success"
+            });
+          })
+          .finally(() => {
+            switchLoadMap.value[index] = Object.assign(
+              {},
+              switchLoadMap.value[index],
+              {
+                loading: false
+              }
+            );
           });
-        }, 300);
       })
       .catch(() => {
         row.status === 0 ? (row.status = 1) : (row.status = 0);
@@ -231,17 +239,20 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     console.log(row);
   }
 
-  function handleDelete(row) {
+  async function handleDelete(row) {
+    await deleteUser(row.id);
     message(`您删除了用户编号为${row.id}的这条数据`, { type: "success" });
     onSearch();
   }
 
   function handleSizeChange(val: number) {
     console.log(`${val} items per page`);
+    onSearch();
   }
 
   function handleCurrentChange(val: number) {
     console.log(`current page: ${val}`);
+    onSearch();
   }
 
   /** 当CheckBox选择项发生变化时会触发该事件 */
@@ -274,7 +285,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     loading.value = true;
     const { data } = await getUserList(toRaw(form));
     dataList.value = data.list;
-    pagination.total = data.count;
+    pagination.total = data.total;
     // pagination.pageSize = data.pageSize;
     // pagination.currentPage = data.currentPage;
 
@@ -321,7 +332,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
           password: row?.password ?? "",
           phone: row?.phone ?? "",
           email: row?.email ?? "",
-          sex: row?.sex ?? "",
+          sex: row?.sex ?? undefined,
           status: row?.status ?? 1,
           remark: row?.remark ?? ""
         }
@@ -342,17 +353,18 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
           done(); // 关闭弹框
           onSearch(); // 刷新表格数据
         }
-        FormRef.validate(valid => {
-          if (valid) {
-            console.log("curData", curData);
-            // 表单规则校验通过
-            if (title === "新增") {
-              // 实际开发先调用新增接口，再进行下面操作
-              chores();
-            } else {
-              // 实际开发先调用修改接口，再进行下面操作
-              chores();
-            }
+        FormRef.validate(async valid => {
+          if (!valid) return;
+          console.log("curData", curData);
+          // 表单规则校验通过
+          if (title === "新增") {
+            // 实际开发先调用新增接口，再进行下面操作
+            await createUser(curData);
+            chores();
+          } else {
+            // 实际开发先调用修改接口，再进行下面操作
+            await updateUser(row.id, curData);
+            chores();
           }
         });
       }
@@ -447,17 +459,17 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       ),
       closeCallBack: () => (pwdForm.newPwd = ""),
       beforeSure: done => {
-        ruleFormRef.value.validate(valid => {
-          if (valid) {
-            // 表单规则校验通过
-            message(`已成功重置 ${row.username} 用户的密码`, {
-              type: "success"
-            });
-            console.log(pwdForm.newPwd);
-            // 根据实际业务使用pwdForm.newPwd和row里的某些字段去调用重置用户密码接口即可
-            done(); // 关闭弹框
-            onSearch(); // 刷新表格数据
-          }
+        ruleFormRef.value.validate(async valid => {
+          if (!valid) return;
+          // 表单规则校验通过
+          message(`已成功重置 ${row.username} 用户的密码`, {
+            type: "success"
+          });
+          console.log(pwdForm.newPwd);
+          // 根据实际业务使用pwdForm.newPwd和row里的某些字段去调用重置用户密码接口即可
+          await resetUserPassword(row.id, { password: pwdForm.newPwd });
+          done(); // 关闭弹框
+          onSearch(); // 刷新表格数据
         });
       }
     });
@@ -466,7 +478,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   /** 分配角色 */
   async function handleRole(row) {
     // 选中的角色列表
-    const ids = (await getRoleIds({ userId: row.id })).data ?? [];
+    const ids = (await getRoleIds({ id: row.id })).data ?? [];
     addDialog({
       title: `分配 ${row.username} 用户的角色`,
       props: {
@@ -483,10 +495,11 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       fullscreenIcon: true,
       closeOnClickModal: false,
       contentRenderer: () => h(roleForm),
-      beforeSure: (done, { options }) => {
+      beforeSure: async (done, { options }) => {
         const curData = options.props.formInline as RoleFormItemProps;
         console.log("curIds", curData.ids);
         // 根据实际业务使用curData.ids和row里的某些字段去调用修改角色接口即可
+        await assignRole(row.id, curData.ids);
         done(); // 关闭弹框
       }
     });

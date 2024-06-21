@@ -25,7 +25,7 @@ export const systemUser = pgTable("system_user", {
   email: text("email").unique(),
   // gender: text("gender", { enum: SystemGenderEnum }),
   // gender: genderEnum('gender'),
-  sex: smallint("sex").notNull(),
+  sex: smallint("sex"),
   remark: text("remark"),
 
   deptId: integer("dept_id").references(() => systemDept.id),

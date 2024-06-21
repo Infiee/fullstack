@@ -15,7 +15,7 @@ const props = withDefaults(defineProps<FormProps>(), {
     password: "",
     phone: "",
     email: "",
-    sex: "",
+    sex: undefined,
     status: 1,
     remark: ""
   })
@@ -89,6 +89,7 @@ defineExpose({ getRef });
             v-model="newFormInline.phone"
             clearable
             placeholder="请输入手机号"
+            maxlength="11"
           />
         </el-form-item>
       </re-col>

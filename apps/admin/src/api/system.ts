@@ -22,14 +22,12 @@ type ResultTable = {
 export const getUserList = async (
   data: ClientInferRequest<typeof contract.systemUser.filterAll>["query"]
 ) => {
-  // return http.request<ResultTable>("post", "/user", { data });
   const { body } = await client.systemUser.filterAll({ query: data });
   return body;
 };
 
 /** 系统管理-用户管理-获取所有角色列表 */
 export const getAllRoleList = async () => {
-  // return http.request<Result>("get", "/list-all-role");
   const { body } = await client.systemRole.getAll();
   return body;
 };
@@ -46,21 +44,18 @@ export const getRoleIds = async (
 export const getRoleList = async (
   data: ClientInferRequest<typeof contract.systemRole.filterAll>["query"]
 ) => {
-  // return http.request<ResultTable>("post", "/role", { data });
   const { body } = await client.systemRole.filterAll({ query: data });
   return body;
 };
 
 /** 获取系统管理-菜单管理列表 */
 export const getMenuList = async () => {
-  // return http.request<Result>("post", "/menu", { data });
   const { body } = await client.systemMenu.getAll();
   return body;
 };
 
 /** 获取系统管理-部门管理列表 */
 export const getDeptList = async () => {
-  // return http.request<Result>("post", "/dept", { data });
   const { body } = await client.systemDept.filterAll();
   return body;
 };
@@ -105,4 +100,54 @@ export const getRoleMenu = (data?: object) => {
 export const getRoleMenuIds = (data?: object) => {
   // return http.request<Result>("post", "/role-menu-ids", { data });
   return [];
+};
+
+/** ----------- 自定义 ------------ */
+// 用户
+export const createUser = async (
+  dto: ClientInferRequest<typeof contract.systemUser.create>["body"]
+) => {
+  const { body } = await client.systemUser.create({
+    body: dto
+  });
+  return { data: body };
+};
+
+export const updateUser = async (
+  id: number,
+  dto?: ClientInferRequest<typeof contract.systemUser.update>["body"]
+) => {
+  console.log("dasdasd", id, dto);
+  const { body } = await client.systemUser.update({
+    params: { id },
+    body: dto
+  });
+  return { data: body };
+};
+
+export const resetUserPassword = async (
+  id: number,
+  dto?: ClientInferRequest<typeof contract.systemUser.resetPassword>["body"]
+) => {
+  const { body } = await client.systemUser.resetPassword({
+    params: { id },
+    body: dto
+  });
+  return { data: body };
+};
+
+export const deleteUser = async (id: number) => {
+  const { body } = await client.systemUser.remove({
+    params: { id },
+    body: {}
+  });
+  return { data: body };
+};
+
+export const assignRole = async (id: number, roleIds?: number[]) => {
+  const { body } = await client.systemUser.assignRole({
+    params: { id },
+    body: { roleIds }
+  });
+  return { data: body };
 };

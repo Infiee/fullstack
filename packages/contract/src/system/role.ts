@@ -129,7 +129,7 @@ export const systemRole = c.router(
         200: apiResultSchema(
           z.object({
             list: selectSystemRoleSchema.array(),
-            count: z.number(),
+            total: z.number(),
           })
         ),
       },

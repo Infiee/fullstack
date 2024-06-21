@@ -262,10 +262,10 @@ export const menuData: Menu[] = [
       },
       {
         title: "部门管理",
-        path: "/system/department",
-        name: "SystemDepartment",
-        component: "/system/department/index",
-        auths: "system:department:view",
+        path: "/system/dept",
+        name: "SystemDept",
+        component: "/system/dept/index",
+        auths: "system:dept:view",
         menuType: 0,
         rank: 3,
         showLink: true,
@@ -274,7 +274,7 @@ export const menuData: Menu[] = [
         children: [
           {
             title: "部门查询",
-            auths: "system:department:query",
+            auths: "system:dept:query",
             menuType: 3,
             rank: 1,
             showLink: true,
@@ -282,7 +282,7 @@ export const menuData: Menu[] = [
           },
           {
             title: "部门新增",
-            auths: "system:department:create",
+            auths: "system:dept:create",
             menuType: 3,
             rank: 2,
             showLink: true,
@@ -290,7 +290,7 @@ export const menuData: Menu[] = [
           },
           {
             title: "部门修改",
-            auths: "system:department:update",
+            auths: "system:dept:update",
             menuType: 3,
             rank: 3,
             showLink: true,
@@ -298,7 +298,7 @@ export const menuData: Menu[] = [
           },
           {
             title: "部门删除",
-            auths: "system:department:delete",
+            auths: "system:dept:delete",
             menuType: 3,
             rank: 4,
             showLink: true,
