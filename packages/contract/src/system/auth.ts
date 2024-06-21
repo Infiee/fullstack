@@ -94,10 +94,16 @@ export const systemAuth = c.router(
     // 刷新token
     refreshToken: {
       method: "POST",
-      path: "/refreshToken",
+      path: "/refresh-token",
       body: z.object({ refreshToken: z.string() }),
       responses: {
-        200: apiResultSchema(z.any()),
+        200: apiResultSchema(
+          z.object({
+            accessToken: z.string(),
+            refreshToken: z.string(),
+            expires: z.number(),
+          })
+        ),
       },
       metadata,
       summary: "刷新token",

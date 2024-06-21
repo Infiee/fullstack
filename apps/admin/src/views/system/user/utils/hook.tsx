@@ -274,9 +274,9 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     loading.value = true;
     const { data } = await getUserList(toRaw(form));
     dataList.value = data.list;
-    pagination.total = data.total;
-    pagination.pageSize = data.pageSize;
-    pagination.currentPage = data.currentPage;
+    pagination.total = data.count;
+    // pagination.pageSize = data.pageSize;
+    // pagination.currentPage = data.currentPage;
 
     setTimeout(() => {
       loading.value = false;
@@ -315,7 +315,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         formInline: {
           title,
           higherDeptOptions: formatHigherDeptOptions(higherDeptOptions.value),
-          parentId: row?.dept.id ?? 0,
+          parentId: row?.dept?.id ?? 0,
           nickname: row?.nickname ?? "",
           username: row?.username ?? "",
           password: row?.password ?? "",

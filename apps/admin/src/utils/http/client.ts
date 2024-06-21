@@ -29,10 +29,10 @@ export const client = initClient(contract, {
     const { path, method, headers, body } = args;
 
     // 获取token
-    const data = getToken();
-    if (data && data.accessToken) {
-      headers["Authorization"] = formatToken(data.accessToken);
-    }
+    // const data = getToken();
+    // if (data && data.accessToken) {
+    //   headers["Authorization"] = formatToken(data.accessToken);
+    // }
     const params = {
       headers,
       data: body
