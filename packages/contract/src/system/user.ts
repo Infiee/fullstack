@@ -98,6 +98,17 @@ export const systemUser = c.router(
       metadata,
       summary: "删除某个系统用户",
     },
+    // 批量删除用户
+    batchRemove: {
+      method: "DELETE",
+      path: "/user/batchRemove",
+      body: z.object({ ids: z.number().array() }),
+      responses: {
+        200: apiResultSchema(z.null()),
+      },
+      metadata,
+      summary: "删除某个系统用户",
+    },
     // 用户分配角色
     assignRole: {
       method: "POST",

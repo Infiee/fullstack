@@ -26,7 +26,8 @@ import {
   updateUser,
   resetUserPassword,
   assignRole,
-  deleteUser
+  deleteUser,
+  batchDeleteUser
 } from "@/api/system";
 import {
   ElForm,
@@ -270,10 +271,11 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   }
 
   /** 批量删除 */
-  function onbatchDel() {
+  async function onbatchDel() {
     // 返回当前选中的行
     const curSelected = tableRef.value.getTableRef().getSelectionRows();
     // 接下来根据实际业务，通过选中行的某项数据，比如下面的id，调用接口进行批量删除
+    await batchDeleteUser(getKeyList(curSelected, "id"));
     message(`已删除用户编号为 ${getKeyList(curSelected, "id")} 的数据`, {
       type: "success"
     });

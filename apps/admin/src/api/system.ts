@@ -144,6 +144,13 @@ export const deleteUser = async (id: number) => {
   return { data: body };
 };
 
+export const batchDeleteUser = async (ids: number[]) => {
+  const { body } = await client.systemUser.batchRemove({
+    body: { ids }
+  });
+  return { data: body };
+};
+
 export const assignRole = async (id: number, roleIds?: number[]) => {
   const { body } = await client.systemUser.assignRole({
     params: { id },
