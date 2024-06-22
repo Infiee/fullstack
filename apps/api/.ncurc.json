@@ -1,0 +1,11 @@
+{
+  "reject": [
+    "nanoid",
+    "reflect-metadata",
+    "@types/supertest",
+    "@typescript-eslint/eslint-plugin",
+    "@typescript-eslint/parser",
+    "eslint",
+    "nestjs-throttler-storage-redis"
+  ]
+}
