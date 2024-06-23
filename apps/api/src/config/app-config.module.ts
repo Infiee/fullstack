@@ -16,6 +16,7 @@ import { AppConfigService } from './app-config.service';
       // 自定义验证
       validate: (env) => envConfigSchema.parse(env),
       // envFilePath: [`.env.${process.env.NODE_ENV}`],
+      envFilePath: ['.env', '.env.local'],
     }),
   ],
   providers: [AppConfigService],

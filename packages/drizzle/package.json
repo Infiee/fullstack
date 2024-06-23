@@ -23,7 +23,8 @@
     "@types/pg": "^8.11.6",
     "drizzle-kit": "^0.22.7",
     "tsup": "^8.1.0",
-    "tsx": "^4.15.2"
+    "tsx": "^4.15.2",
+    "typescript": "^5.4.5"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
