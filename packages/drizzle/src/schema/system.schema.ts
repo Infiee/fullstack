@@ -105,7 +105,8 @@ export const systemDept = pgTable("system_dept", {
   email: text("email"),
   remark: text("remark"),
   sort: smallint("sort").notNull().default(0),
-  type: smallint("sort").notNull(),
+  // type: smallint("type").notNull(),
+  type: smallint("type"),
   ...baseDateColumns,
   ...baseStatusColumns,
 });

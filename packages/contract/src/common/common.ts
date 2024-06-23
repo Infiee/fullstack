@@ -1,4 +1,4 @@
-import { SystemStatusEnum } from "@repo/drizzle";
+import { SystemOrderByEnum, SystemStatusEnum } from "@repo/drizzle";
 import { ZodNumber, ZodTypeAny, z } from "zod";
 
 /** api result */
@@ -23,7 +23,7 @@ export const BasePaginationSchema = z.object({
 /** 基础排序参数 */
 export const BaseSortSchema = z.object({
   sortBy: z.string().optional(),
-  orderBy: z.enum(["asc", "desc"]).optional(),
+  orderBy: z.nativeEnum(SystemOrderByEnum).optional(),
 });
 /** 基础状态参数 */
 export const BaseStatusSchema = z.object({

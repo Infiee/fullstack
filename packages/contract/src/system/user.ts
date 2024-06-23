@@ -18,6 +18,7 @@ const filterUserSchema = z
   .object({
     username: z.string().optional(),
     phone: z.string().optional(),
+    deptId: numericString(z.number()).optional(),
   })
   .merge(basePaginationAndSortSchema)
   .merge(BaseStatusSchema);

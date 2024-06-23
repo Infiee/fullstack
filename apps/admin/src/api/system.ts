@@ -117,7 +117,6 @@ export const updateUser = async (
   id: number,
   dto?: ClientInferRequest<typeof contract.systemUser.update>["body"]
 ) => {
-  console.log("dasdasd", id, dto);
   const { body } = await client.systemUser.update({
     params: { id },
     body: dto
@@ -155,6 +154,35 @@ export const assignRole = async (id: number, roleIds?: number[]) => {
   const { body } = await client.systemUser.assignRole({
     params: { id },
     body: { roleIds }
+  });
+  return { data: body };
+};
+
+// 部门
+export const createDept = async (
+  dto: ClientInferRequest<typeof contract.systemDept.create>["body"]
+) => {
+  const { body } = await client.systemDept.create({
+    body: dto
+  });
+  return { data: body };
+};
+
+export const updateDept = async (
+  id: number,
+  dto?: ClientInferRequest<typeof contract.systemDept.update>["body"]
+) => {
+  const { body } = await client.systemDept.update({
+    params: { id },
+    body: dto
+  });
+  return { data: body };
+};
+
+export const deleteDept = async (id: number) => {
+  const { body } = await client.systemDept.remove({
+    params: { id },
+    body: {}
   });
   return { data: body };
 };

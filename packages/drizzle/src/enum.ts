@@ -1,5 +1,13 @@
 // export const SystemGenderEnum = ["M", "F"] as const;
 
+/** 系统 - 排序 */
+export enum SystemOrderByEnum {
+  /** 升序 */
+  asc = "asc",
+  /** 降序 */
+  desc = "desc",
+}
+
 /** 系统 - 状态 */
 export enum SystemStatusEnum {
   /** 禁用 */

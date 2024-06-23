@@ -46,14 +46,18 @@ import {
   reactive,
   onMounted
 } from "vue";
+import type { SystemOrderByEnum } from "@repo/drizzle";
 
 export function useUser(tableRef: Ref, treeRef: Ref) {
   const form = reactive({
     // 左侧部门树的id
-    deptId: "",
+    deptId: undefined,
     username: "",
     phone: "",
-    status: undefined
+    status: undefined,
+    // 排序
+    sortBy: "id",
+    orderBy: "asc" as unknown as SystemOrderByEnum
   });
   const formRef = ref();
   const ruleFormRef = ref();
@@ -83,7 +87,8 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     {
       label: "用户编号",
       prop: "id",
-      width: 90
+      width: 110,
+      sortable: "custom"
     },
     {
       label: "用户头像",
@@ -299,13 +304,13 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   const resetForm = formEl => {
     if (!formEl) return;
     formEl.resetFields();
-    form.deptId = "";
+    form.deptId = undefined;
     treeRef.value.onTreeReset();
     onSearch();
   };
 
   function onTreeSelect({ id, selected }) {
-    form.deptId = selected ? id : "";
+    form.deptId = selected ? id : undefined;
     onSearch();
   }
 
@@ -365,7 +370,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
             chores();
           } else {
             // 实际开发先调用修改接口，再进行下面操作
-            await updateUser(row.id, curData);
+            await updateUser(row.id, { ...curData, deptId: curData.parentId });
             chores();
           }
         });
@@ -507,6 +512,20 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     });
   }
 
+  /** 排序 */
+  function handleSortChange(data: { column: any; prop: string; order: any }) {
+    console.log("sort change:", data);
+    const orderByMap = {
+      ascending: "asc",
+      descending: "desc"
+    };
+    if (data.prop) {
+      form.sortBy = data.prop;
+    }
+    form.orderBy = orderByMap[data.order];
+    onSearch();
+  }
+
   onMounted(async () => {
     treeLoading.value = true;
     onSearch();
@@ -545,6 +564,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     handleSizeChange,
     onSelectionCancel,
     handleCurrentChange,
-    handleSelectionChange
+    handleSelectionChange,
+    handleSortChange
   };
 }

@@ -69,6 +69,7 @@ export class UserService {
         : undefined,
       query.phone ? ilike(this.schema.phone, `%${query.phone}%`) : undefined,
       query.status ? eq(this.schema.status, query.status) : undefined,
+      query.deptId ? eq(this.schema.deptId, query.deptId) : undefined,
     );
     const orderByOptions = () => {
       const field = this.schema[query.sortBy];

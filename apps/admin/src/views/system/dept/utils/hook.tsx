@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
-import { getDeptList } from "@/api/system";
+import { createDept, getDeptList, updateDept } from "@/api/system";
 import { usePublicHooks } from "../../hooks";
 import { addDialog } from "@/components/ReDialog";
 import { reactive, ref, onMounted, h } from "vue";
@@ -108,7 +108,7 @@ export function useDept() {
       props: {
         formInline: {
           higherDeptOptions: formatHigherDeptOptions(cloneDeep(dataList.value)),
-          parentId: row?.parentId ?? 0,
+          parentId: row?.parentId ?? null,
           name: row?.name ?? "",
           principal: row?.principal ?? "",
           phone: row?.phone ?? "",
@@ -134,17 +134,18 @@ export function useDept() {
           done(); // 关闭弹框
           onSearch(); // 刷新表格数据
         }
-        FormRef.validate(valid => {
-          if (valid) {
-            console.log("curData", curData);
-            // 表单规则校验通过
-            if (title === "新增") {
-              // 实际开发先调用新增接口，再进行下面操作
-              chores();
-            } else {
-              // 实际开发先调用修改接口，再进行下面操作
-              chores();
-            }
+        FormRef.validate(async valid => {
+          if (!valid) return;
+          console.log("curData", curData);
+          // 表单规则校验通过
+          if (title === "新增") {
+            // 实际开发先调用新增接口，再进行下面操作
+            await createDept(curData);
+            chores();
+          } else {
+            // 实际开发先调用修改接口，再进行下面操作
+            await updateDept(row.id, curData);
+            chores();
           }
         });
       }

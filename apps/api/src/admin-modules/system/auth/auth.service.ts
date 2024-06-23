@@ -253,6 +253,7 @@ export class AuthService {
     );
     // 管理员
     const isAdmin = this.sharedService.isAdmin(payload?.id);
+    // TODO：权限判断 - 管理员 - 获取所有菜单
     if (isAdmin) {
       const menus = await this.db.query.systemMenu.findMany();
       return menuToTree(menus);

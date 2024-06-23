@@ -32,7 +32,6 @@ export class DeptService {
     return this.db.insert(this.schema).values(dto).returning(this.columnFields);
   }
 
-  // getAll(query: BasePagination = { pageNum: 1, pageSize: 10 }) {
   getAll() {
     return this.query.findMany();
   }

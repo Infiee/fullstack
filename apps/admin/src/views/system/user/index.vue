@@ -46,7 +46,8 @@ const {
   handleSizeChange,
   onSelectionCancel,
   handleCurrentChange,
-  handleSelectionChange
+  handleSelectionChange,
+  handleSortChange
 } = useUser(tableRef, treeRef);
 </script>
 
@@ -162,9 +163,11 @@ const {
               background: 'var(--el-fill-color-light)',
               color: 'var(--el-text-color-primary)'
             }"
+            :default-sort="{ prop: 'id', order: 'ascending' }"
             @selection-change="handleSelectionChange"
             @page-size-change="handleSizeChange"
             @page-current-change="handleCurrentChange"
+            @sort-change="handleSortChange"
           >
             <template #operation="{ row }">
               <el-button
