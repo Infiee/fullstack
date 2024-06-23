@@ -91,15 +91,23 @@ export const getSystemLogsDetail = (data?: object) => {
 };
 
 /** 获取角色管理-权限-菜单权限 */
-export const getRoleMenu = (data?: object) => {
-  // return http.request<Result>("post", "/role-menu", { data });
-  return [];
+export const getRoleMenu = async () => {
+  const { body } = await client.systemMenu.getAll();
+  return body;
 };
+// export const getRoleMenu = async (
+//   data: ClientInferRequest<typeof contract.systemRole.getRoleMenu>["params"]
+// ) => {
+//   const { body } = await client.systemRole.getRoleMenu({ params: data });
+//   return body;
+// };
 
 /** 获取角色管理-权限-菜单权限-根据角色 id 查对应菜单 */
-export const getRoleMenuIds = (data?: object) => {
-  // return http.request<Result>("post", "/role-menu-ids", { data });
-  return [];
+export const getRoleMenuIds = async (
+  data: ClientInferRequest<typeof contract.systemRole.getRoleMenuIds>["params"]
+) => {
+  const { body } = await client.systemRole.getRoleMenuIds({ params: data });
+  return body;
 };
 
 /** ----------- 自定义 ------------ */
