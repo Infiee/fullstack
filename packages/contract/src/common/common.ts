@@ -28,7 +28,15 @@ export const BaseSortSchema = z.object({
 /** 基础状态参数 */
 export const BaseStatusSchema = z.object({
   // status: z.enum(SystemStatusEnum).nullish(),
-  status: z.nativeEnum(SystemStatusEnum).optional(),
+  // status: z.nativeEnum(SystemStatusEnum).optional(),
+  status: z.preprocess((val) => {
+    if (typeof val === "string") {
+      // 尝试将字符串转换为数字
+      const num = Number(val);
+      return isNaN(num) ? val : num;
+    }
+    return val;
+  }, z.nativeEnum(SystemStatusEnum).optional()),
 });
 /** 基础分页加排序schema */
 export const basePaginationAndSortSchema =
@@ -44,8 +52,8 @@ export const baseSchema = z.object({
 });
 
 /** 自定义数字字符串校验 */
-export const numericString = (schema: ZodNumber) =>
-  z.preprocess((val) => {
+export function numericString(schema: ZodNumber) {
+  return z.preprocess((val) => {
     if (typeof val === "string") {
       return parseInt(val, 10);
     } else if (typeof val === "number") {
@@ -54,6 +62,7 @@ export const numericString = (schema: ZodNumber) =>
       return undefined;
     }
   }, schema);
+}
 
 export type BasePagination = z.infer<typeof BasePaginationSchema>;
 export type BaseSort = z.infer<typeof BaseSortSchema>;

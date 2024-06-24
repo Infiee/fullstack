@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import ReCol from "@/components/ReCol";
 import { formRules } from "./utils/rule";
 import { FormProps } from "./utils/types";
+import { usePublicHooks } from "../hooks";
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
     name: "",
     code: "",
-    remark: ""
+    remark: "",
+    status: 1
   })
 });
 
 const ruleFormRef = ref();
+const { switchStyle } = usePublicHooks();
 const newFormInline = ref(props.formInline);
 
 function getRef() {
@@ -43,6 +47,20 @@ defineExpose({ getRef });
         placeholder="请输入角色标识"
       />
     </el-form-item>
+
+    <re-col :value="12" :xs="24" :sm="24">
+      <el-form-item label="角色状态">
+        <el-switch
+          v-model="newFormInline.status"
+          inline-prompt
+          :active-value="1"
+          :inactive-value="0"
+          active-text="启用"
+          inactive-text="停用"
+          :style="switchStyle"
+        />
+      </el-form-item>
+    </re-col>
 
     <el-form-item label="备注">
       <el-input

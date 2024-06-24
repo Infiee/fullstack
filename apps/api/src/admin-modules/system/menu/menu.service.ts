@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { eq, getTableColumns } from 'drizzle-orm';
-import { DrizzleService, schema } from '@/shared/database/drizzle/drizzle.service';
+import { asc, eq, getTableColumns } from 'drizzle-orm';
+import {
+  DrizzleService,
+  schema,
+} from '@/shared/database/drizzle/drizzle.service';
 import { InsertSystemMenu } from '@repo/drizzle';
 
 @Injectable()
@@ -28,7 +31,10 @@ export class MenuService {
   }
 
   getAll() {
-    return this.db.query.systemMenu.findMany({ offset: 0 });
+    return this.db.query.systemMenu.findMany({
+      offset: 0,
+      orderBy: [asc(this.schema.parentId), asc(this.schema.rank)],
+    });
   }
 
   getOne(id: number) {

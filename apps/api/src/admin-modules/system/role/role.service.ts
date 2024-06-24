@@ -7,6 +7,7 @@ import {
 } from '@/shared/database/drizzle/drizzle.service';
 import { InsertSystemRole } from '@repo/drizzle';
 import { ServerInferRequest } from '@ts-rest/core';
+import { isNumber } from 'radash';
 
 @Injectable()
 export class RoleService {
@@ -95,15 +96,13 @@ export class RoleService {
       pageNum: 1,
       pageSize: 10,
       sortBy: 'id',
-      orderBy: '',
+      orderBy: 'asc',
       ...queryParams,
     };
     const whereOptions = and(
-      query.roleName
-        ? ilike(this.schema.name, `%${query.roleName}%`)
-        : undefined,
-      query.roleKey ? ilike(this.schema.code, `%${query.roleKey}%`) : undefined,
-      query.status ? eq(this.schema.status, query.status) : undefined,
+      query.name ? ilike(this.schema.name, `%${query.name}%`) : undefined,
+      query.code ? ilike(this.schema.code, `%${query.code}%`) : undefined,
+      isNumber(query.status) ? eq(this.schema.status, query.status) : undefined,
     );
     const orderByOptions = () => {
       const field = this.schema[query.sortBy];

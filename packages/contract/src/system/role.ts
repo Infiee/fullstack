@@ -20,16 +20,16 @@ const metadata = {
 } as RouterMetadata;
 
 export const systemRoleSchema = insertSystemRoleSchema.extend({
-  roleName: z.string().optional().default("测试"),
-  roleKey: z.string().optional().default("test"),
+  name: z.string().optional().default("测试"),
+  code: z.string().optional().default("test"),
   remark: z.string().optional().default("测试角色"),
   sort: z.coerce.number().optional().default(0),
 });
 
 const filterRoleSchema = z
   .object({
-    roleName: z.string().optional(),
-    roleKey: z.string().optional(),
+    name: z.string().optional(),
+    code: z.string().optional(),
   })
   .merge(basePaginationAndSortSchema)
   .merge(BaseStatusSchema);

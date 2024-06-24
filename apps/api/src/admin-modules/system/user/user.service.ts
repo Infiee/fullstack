@@ -23,6 +23,7 @@ import {
 import { contract } from '@repo/contract';
 import { ServerInferRequest } from '@ts-rest/core';
 import { hashPassword } from '@/common/utils/password';
+import { isNumber } from 'radash';
 
 @Injectable()
 export class UserService {
@@ -68,7 +69,7 @@ export class UserService {
         ? ilike(this.schema.username, `%${query.username}%`)
         : undefined,
       query.phone ? ilike(this.schema.phone, `%${query.phone}%`) : undefined,
-      query.status ? eq(this.schema.status, query.status) : undefined,
+      isNumber(query.status) ? eq(this.schema.status, query.status) : undefined,
       query.deptId ? eq(this.schema.deptId, query.deptId) : undefined,
     );
     const orderByOptions = () => {

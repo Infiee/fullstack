@@ -111,7 +111,7 @@ export const getRoleMenuIds = async (
 };
 
 /** ----------- 自定义 ------------ */
-// 用户
+/** 用户 */
 export const createUser = async (
   dto: ClientInferRequest<typeof contract.systemUser.create>["body"]
 ) => {
@@ -166,7 +166,36 @@ export const assignRole = async (id: number, roleIds?: number[]) => {
   return { data: body };
 };
 
-// 部门
+/** 角色 */
+export const createRole = async (
+  dto: ClientInferRequest<typeof contract.systemRole.create>["body"]
+) => {
+  const { body } = await client.systemRole.create({
+    body: dto
+  });
+  return { data: body };
+};
+
+export const updateRole = async (
+  id: number,
+  dto?: ClientInferRequest<typeof contract.systemRole.update>["body"]
+) => {
+  const { body } = await client.systemRole.update({
+    params: { id },
+    body: dto
+  });
+  return { data: body };
+};
+
+export const deleteRole = async (id: number) => {
+  const { body } = await client.systemRole.remove({
+    params: { id },
+    body: {}
+  });
+  return { data: body };
+};
+
+/** 部门 */
 export const createDept = async (
   dto: ClientInferRequest<typeof contract.systemDept.create>["body"]
 ) => {
