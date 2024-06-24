@@ -58,15 +58,14 @@ export class DeptService {
       .returning(this.columnFields);
   }
 
-  /** 筛选所有角色 */
+  /** 筛选所有部门 */
   async filterAll(
     queryParams: ServerInferRequest<
       typeof contract.systemDept.filterAll
     >['query'],
   ) {
     const query = {
-      sortBy: 'id',
-      orderBy: '',
+      orderBy: 'asc',
       ...queryParams,
     };
     const whereOptions = and(
@@ -74,11 +73,10 @@ export class DeptService {
       query.status ? eq(this.schema.status, query.status) : undefined,
     );
     const orderByOptions = () => {
-      const field = this.schema[query.sortBy];
       if (query.orderBy === 'asc') {
-        return asc(field);
+        return [asc(this.schema.parentId), asc(this.schema.sort)];
       } else if (query.orderBy === 'desc') {
-        return desc(field);
+        return [desc(this.schema.parentId), desc(this.schema.sort)];
       }
     };
     const depts = await this.query.findMany({

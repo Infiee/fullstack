@@ -1,4 +1,5 @@
 import {
+  InsertSystemDept,
   InsertSystemMenu,
   InsertSystemRole,
   InsertSystemUser,
@@ -14,7 +15,7 @@ export const userData: InsertSystemUser[] = [
     phone: "13554075730",
     status: 1,
     remark: "管理员",
-    sex: 0
+    sex: 0,
   },
   {
     username: "xiaowang",
@@ -24,7 +25,7 @@ export const userData: InsertSystemUser[] = [
     phone: "13554075731",
     status: 1,
     remark: "",
-    sex: 0
+    sex: 0,
   },
   {
     username: "xiaohong",
@@ -34,7 +35,7 @@ export const userData: InsertSystemUser[] = [
     phone: "13554075732",
     status: 1,
     remark: "",
-    sex: 0
+    sex: 0,
   },
   {
     username: "xiaohuang",
@@ -44,7 +45,7 @@ export const userData: InsertSystemUser[] = [
     phone: "13554075733",
     status: 1,
     remark: "",
-    sex: 0
+    sex: 0,
   },
   {
     username: "xiaolv",
@@ -54,7 +55,7 @@ export const userData: InsertSystemUser[] = [
     phone: "13554075734",
     status: 1,
     remark: "",
-    sex: 0
+    sex: 0,
   },
 ];
 
@@ -350,6 +351,37 @@ export const menuData: Menu[] = [
             showLink: true,
             status: 1,
           },
+        ],
+      },
+    ],
+  },
+];
+
+/** 部门 */
+export type Dept = InsertSystemDept & { children?: Dept[] };
+export const deptData: Dept[] = [
+  {
+    name: "小王科技",
+    status: 1,
+    // parentId: null,
+    sort: 0,
+    children: [
+      {
+        name: "武汉分公司",
+        status: 1,
+        children: [
+          { name: "研发部", status: 1, sort: 1 },
+          { name: "行政部", status: 1, sort: 2 },
+          { name: "运维部", status: 1, sort: 3 },
+        ],
+      },
+      {
+        name: "深圳分公司",
+        status: 1,
+        children: [
+          { name: "销售部", status: 1, sort: 1 },
+          { name: "市场部", status: 1, sort: 2 },
+          { name: "财务部", status: 1, sort: 3 },
         ],
       },
     ],
