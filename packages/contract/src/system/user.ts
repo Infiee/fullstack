@@ -108,7 +108,7 @@ export const systemUser = c.router(
         200: apiResultSchema(z.null()),
       },
       metadata,
-      summary: "删除某个系统用户",
+      summary: "批量删除系统用户",
     },
     // 用户分配角色
     assignRole: {

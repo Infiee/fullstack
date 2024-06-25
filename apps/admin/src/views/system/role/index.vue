@@ -267,6 +267,10 @@ onMounted(() => {
         class="!min-w-[calc(100vw-60vw-268px)] mt-2 px-2 pb-2 bg-bg_color ml-2 overflow-auto"
       >
         <div class="flex justify-between w-full px-3 pt-5 pb-4">
+          <p class="font-bold truncate">
+            菜单权限
+            {{ `${curRow?.name ? `（${curRow.name}）` : ""}` }}
+          </p>
           <div class="flex">
             <span :class="iconClass">
               <IconifyIconOffline
@@ -293,10 +297,6 @@ onMounted(() => {
               />
             </span>
           </div>
-          <p class="font-bold truncate">
-            菜单权限
-            {{ `${curRow?.name ? `（${curRow.name}）` : ""}` }}
-          </p>
         </div>
         <el-input
           v-model="treeSearchValue"

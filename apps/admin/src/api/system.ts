@@ -4,19 +4,19 @@ import { client } from "@/utils/http/client";
 import type { contract } from "@repo/contract";
 import type { ClientInferRequest } from "@ts-rest/core";
 
-type ResultTable = {
-  success: boolean;
-  data?: {
-    /** 列表数据 */
-    list: Array<any>;
-    /** 总条目数 */
-    total?: number;
-    /** 每页显示条目个数 */
-    pageSize?: number;
-    /** 当前页数 */
-    currentPage?: number;
-  };
-};
+// type ResultTable = {
+//   success: boolean;
+//   data?: {
+//     /** 列表数据 */
+//     list: Array<any>;
+//     /** 总条目数 */
+//     total?: number;
+//     /** 每页显示条目个数 */
+//     pageSize?: number;
+//     /** 当前页数 */
+//     currentPage?: number;
+//   };
+// };
 
 /** 获取系统管理-用户管理列表 */
 export const getUserList = async (
@@ -189,6 +189,43 @@ export const updateRole = async (
 
 export const deleteRole = async (id: number) => {
   const { body } = await client.systemRole.remove({
+    params: { id },
+    body: {}
+  });
+  return { data: body };
+};
+
+export const assignMenu = async (id: number, menuIds: number[]) => {
+  const { body } = await client.systemRole.assignMenu({
+    params: { id },
+    body: { menuIds }
+  });
+  return { data: body };
+};
+
+/** 菜单 */
+export const createMenu = async (
+  dto: ClientInferRequest<typeof contract.systemMenu.create>["body"]
+) => {
+  const { body } = await client.systemMenu.create({
+    body: dto
+  });
+  return { data: body };
+};
+
+export const updateMenu = async (
+  id: number,
+  dto?: ClientInferRequest<typeof contract.systemMenu.update>["body"]
+) => {
+  const { body } = await client.systemMenu.update({
+    params: { id },
+    body: dto
+  });
+  return { data: body };
+};
+
+export const deleteMenu = async (id: number) => {
+  const { body } = await client.systemMenu.remove({
     params: { id },
     body: {}
   });

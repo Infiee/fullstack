@@ -10,7 +10,7 @@ import { insertSystemDeptSchema, selectSystemDeptSchema } from "@repo/drizzle";
 
 const c = initContract();
 const metadata = {
-  openApiTags: ["系统-用户"],
+  openApiTags: ["系统-部门"],
 } as RouterMetadata;
 
 const routePrefix = "dept";

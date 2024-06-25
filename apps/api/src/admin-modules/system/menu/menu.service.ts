@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { asc, eq, getTableColumns } from 'drizzle-orm';
+import { eq, getTableColumns, sql } from 'drizzle-orm';
 import {
   DrizzleService,
   schema,
@@ -33,7 +33,8 @@ export class MenuService {
   getAll() {
     return this.db.query.systemMenu.findMany({
       offset: 0,
-      orderBy: [asc(this.schema.parentId), asc(this.schema.rank)],
+      // orderBy: [asc(this.schema.parentId), asc(this.schema.rank)],
+      orderBy: sql`${this.schema.parentId} asc nulls first,${this.schema.rank} asc`,
     });
   }
 

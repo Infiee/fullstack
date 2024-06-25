@@ -87,10 +87,10 @@ export const menuData: Menu[] = [
   {
     title: "系统管理",
     path: "/system",
-    rank: 10,
+    rank: 1,
     menuType: 0,
     showLink: true,
-    status: 1,
+    icon: "ri:settings-3-line",
     children: [
       {
         title: "用户管理",
@@ -99,9 +99,9 @@ export const menuData: Menu[] = [
         component: "/system/user/index",
         auths: "system:user:view",
         menuType: 0,
-        rank: 0,
+        rank: 1,
         showLink: true,
-        status: 1,
+        // icon: "ri:admin-line",
         children: [
           {
             title: "用户查询",
@@ -109,7 +109,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 1,
             showLink: true,
-            status: 1,
           },
           {
             title: "用户新增",
@@ -117,7 +116,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 2,
             showLink: true,
-            status: 1,
           },
           {
             title: "用户修改",
@@ -125,7 +123,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 3,
             showLink: true,
-            status: 1,
           },
           {
             title: "用户删除",
@@ -133,7 +130,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 4,
             showLink: true,
-            status: 1,
           },
           {
             title: "重置密码",
@@ -141,7 +137,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 5,
             showLink: true,
-            status: 1,
           },
         ],
       },
@@ -152,10 +147,9 @@ export const menuData: Menu[] = [
         component: "/system/role/index",
         auths: "system:role:view",
         menuType: 0,
-        rank: 1,
+        rank: 2,
         showLink: true,
-        status: 1,
-
+        // icon: "ri:admin-fill",
         children: [
           {
             title: "角色查询",
@@ -163,7 +157,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 1,
             showLink: true,
-            status: 1,
           },
           {
             title: "角色新增",
@@ -171,7 +164,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 2,
             showLink: true,
-            status: 1,
           },
           {
             title: "角色修改",
@@ -179,7 +171,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 3,
             showLink: true,
-            status: 1,
           },
           {
             title: "角色删除",
@@ -187,7 +178,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 4,
             showLink: true,
-            status: 1,
           },
           {
             title: "设置角色菜单权限",
@@ -195,7 +185,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 5,
             showLink: true,
-            status: 1,
           },
           {
             title: "设置角色数据权限",
@@ -203,7 +192,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 6,
             showLink: true,
-            status: 1,
           },
           {
             title: "设置用户角色",
@@ -211,7 +199,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 7,
             showLink: true,
-            status: 1,
           },
         ],
       },
@@ -222,10 +209,9 @@ export const menuData: Menu[] = [
         component: "/system/menu/index",
         auths: "system:menu:view",
         menuType: 0,
-        rank: 2,
+        rank: 3,
         showLink: true,
-        status: 1,
-
+        // icon: "ep:menu",
         children: [
           {
             title: "菜单查询",
@@ -233,7 +219,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 1,
             showLink: true,
-            status: 1,
           },
           {
             title: "菜单新增",
@@ -241,7 +226,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 2,
             showLink: true,
-            status: 1,
           },
           {
             title: "菜单修改",
@@ -249,7 +233,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 3,
             showLink: true,
-            status: 1,
           },
           {
             title: "菜单删除",
@@ -257,7 +240,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 4,
             showLink: true,
-            status: 1,
           },
         ],
       },
@@ -268,10 +250,9 @@ export const menuData: Menu[] = [
         component: "/system/dept/index",
         auths: "system:dept:view",
         menuType: 0,
-        rank: 3,
+        rank: 4,
         showLink: true,
-        status: 1,
-
+        icon: "",
         children: [
           {
             title: "部门查询",
@@ -279,7 +260,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 1,
             showLink: true,
-            status: 1,
           },
           {
             title: "部门新增",
@@ -287,7 +267,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 2,
             showLink: true,
-            status: 1,
           },
           {
             title: "部门修改",
@@ -295,7 +274,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 3,
             showLink: true,
-            status: 1,
           },
           {
             title: "部门删除",
@@ -303,7 +281,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 4,
             showLink: true,
-            status: 1,
           },
         ],
       },
@@ -314,10 +291,8 @@ export const menuData: Menu[] = [
         component: "/system/post/index",
         auths: "system:post:view",
         menuType: 0,
-        rank: 4,
+        rank: 5,
         showLink: true,
-        status: 1,
-
         children: [
           {
             title: "岗位查询",
@@ -325,7 +300,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 1,
             showLink: true,
-            status: 1,
           },
           {
             title: "岗位新增",
@@ -333,7 +307,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 2,
             showLink: true,
-            status: 1,
           },
           {
             title: "岗位修改",
@@ -341,7 +314,6 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 3,
             showLink: true,
-            status: 1,
           },
           {
             title: "岗位删除",
@@ -349,11 +321,60 @@ export const menuData: Menu[] = [
             menuType: 3,
             rank: 4,
             showLink: true,
-            status: 1,
           },
         ],
       },
     ],
+  },
+  {
+    title: "系统监控",
+    path: "/monitor",
+    rank: 2,
+    menuType: 0,
+    showLink: true,
+    icon: "ri:settings-3-line",
+    children: [
+      {
+        title: "在线用户",
+        path: "/monitor/online-user",
+        name: "MonitorOnline",
+        component: "/monitor/online",
+        auths: "monitor:online:user",
+        menuType: 0,
+        rank: 10,
+        showLink: true,
+      },
+      {
+        title: "登录日志",
+        path: "/monitor/login-logs",
+        name: "MonitorLoginLogs",
+        component: "/monitor/logs/login",
+        auths: "monitor:login:logs",
+        menuType: 0,
+        rank: 3,
+        showLink: true,
+      },
+      {
+        title: "操作日志",
+        path: "/monitor/operation-logs",
+        name: "MonitorOperationLogs",
+        component: "/monitor/logs/operation",
+        auths: "monitor:operation:logs",
+        menuType: 0,
+        rank: 1,
+        showLink: true,
+      },
+      {
+        title: "系统日志",
+        path: "/monitor/system-logs",
+        name: "MonitorSystemLogs",
+        component: "/monitor/logs/system",
+        auths: "monitor:system:logs",
+        menuType: 0,
+        rank: 4,
+        showLink: true,
+      },
+    ]
   },
 ];
 

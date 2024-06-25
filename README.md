@@ -36,3 +36,41 @@ export const getUserList = async (
   return { data: body };
 };
 ```
+
+## zod移除多余属性和为空的属性
+
+```ts
+import { insertSystemMenuSchema } from "@repo/drizzle";
+
+const row = {
+  menuType: 0,
+  higherMenuOptions: {},
+  parentId: null,
+  title: "",
+  name: "",
+  path: "",
+  component: "",
+  rank: 99,
+  redirect: "",
+  icon: "",
+  extraIcon: "",
+  enterTransition: "",
+  leaveTransition: "",
+  activePath: "",
+  auths: "",
+  frameSrc: "",
+  frameLoading: true,
+  keepAlive: false,
+  hiddenTag: false,
+  fixedTag: false,
+  showLink: true,
+  showParent: false
+  };
+  const removeEmpty = (obj: Record<string, any>): Record<string, any> => {
+    return Object.fromEntries(
+      Object.entries(obj).filter(([_, v]) => v != null && v !== "")
+    );
+  };
+
+  console.log(insertSystemMenuSchema.strip().transform(removeEmpty).parse(row));
+```

@@ -31,13 +31,13 @@ type DB = NodePgDatabase<typeof schema>;
       // await db.execute(sql`DROP TABLE IF EXISTS SystemMenu,SystemUser;`);
 
       await db.transaction(async (tx) => {
-        // await createMenu(tx);
+        await createMenu(tx);
         // await createUser(tx);
         // await createRole(tx);
         // await createUserRole(tx);
-        // await createRoleMenu(tx);
+        await createRoleMenu(tx);
 
-        await createDept(tx);
+        // await createDept(tx);
       });
 
       await client.end();
@@ -75,6 +75,7 @@ async function createMenu(db: DB) {
       .insert(schema.systemMenu)
       .values({
         ...params,
+        // parentId: parentId ?? 0,
         ...(parentId ? { parentId } : {}),
       })
       .returning();
@@ -113,8 +114,10 @@ async function createUserRole(db: DB) {
   }
   console.log("用户->角色数据：创建成功");
 }
+
 // 角色 -> 菜单
 async function createRoleMenu(db: NodePgDatabase<typeof schema>) {
+  /** 注意数据库菜单id是否是下面数组id */
   const menuIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const roleIds = [3];
   const relations = menuIds.map((menuId) => ({ menuId, roleId: roleIds[0] }));

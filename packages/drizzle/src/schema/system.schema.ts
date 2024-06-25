@@ -79,7 +79,7 @@ export const systemMenu = pgTable("system_menu", {
   // 外链地址
   frameSrc: text("frame_src"),
   // 外链动画
-  frameLoading: text("frame_loading"),
+  frameLoading: boolean("frame_loading"),
   // 是否缓存
   keepAlive: boolean("keepAlive"),
   // 是否在菜单显示
@@ -91,8 +91,7 @@ export const systemMenu = pgTable("system_menu", {
   // 隐藏标签页
   hiddenTag: boolean("hiddenTag"),
   // 排序
-  rank: integer("rank").notNull().default(0),
-  ...baseStatusColumns,
+  rank: integer("rank").notNull().default(0)
 });
 
 /** 部门表 */

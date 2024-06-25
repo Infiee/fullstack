@@ -2,7 +2,7 @@ import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
 import ms from 'ms';
 import dayjs from 'dayjs';
-import { asc, eq, inArray } from 'drizzle-orm';
+import { asc, eq, inArray, sql } from 'drizzle-orm';
 
 import { SystemLoginDto } from '@repo/contract';
 import {
@@ -255,7 +255,10 @@ export class AuthService {
     const isAdmin = this.sharedService.isAdmin(payload?.id);
     // TODO：权限判断 - 管理员 - 获取所有菜单
     if (isAdmin) {
-      const menus = await this.db.query.systemMenu.findMany();
+      const menus = await this.db.query.systemMenu.findMany({
+        // orderBy: [asc(schema.systemMenu.parentId), asc(schema.systemMenu.rank)],
+        orderBy: sql`${schema.systemMenu.parentId} asc nulls first,${schema.systemMenu.rank} asc`,
+      });
       return menuToTree(menus);
     }
     // 非管理员

@@ -7,6 +7,7 @@ import {
 } from '@/shared/database/drizzle/drizzle.service';
 import { InsertSystemDept } from '@repo/drizzle';
 import { ServerInferRequest } from '@ts-rest/core';
+import { isNumber } from 'radash';
 
 @Injectable()
 export class DeptService {
@@ -70,7 +71,7 @@ export class DeptService {
     };
     const whereOptions = and(
       query.name ? ilike(this.schema.name, `%${query.name}%`) : undefined,
-      query.status ? eq(this.schema.status, query.status) : undefined,
+      isNumber(query.status) ? eq(this.schema.status, query.status) : undefined,
     );
     const orderByOptions = () => {
       if (query.orderBy === 'asc') {
