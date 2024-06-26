@@ -7,6 +7,7 @@ import {
   serial,
   smallint,
   text,
+  timestamp,
 } from "drizzle-orm/pg-core";
 import "zod";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -91,7 +92,7 @@ export const systemMenu = pgTable("system_menu", {
   // 隐藏标签页
   hiddenTag: boolean("hiddenTag"),
   // 排序
-  rank: integer("rank").notNull().default(0)
+  rank: integer("rank").notNull().default(0),
 });
 
 /** 部门表 */
@@ -110,6 +111,20 @@ export const systemDept = pgTable("system_dept", {
   ...baseStatusColumns,
 });
 
+/** 登录日志表 */
+export const systemLoginLog = pgTable("system_login_log", {
+  id: serial("id").primaryKey(),
+  username: text("user_name").notNull(),
+  ip: text("ip"),
+  address: text("address"),
+  system: text("system"),
+  browser: text("browser"),
+  behavior: text("behavior"),
+  status: smallint("status").notNull(),
+  loginTime: timestamp("login_time", { precision: 3 }).notNull().defaultNow(),
+});
+
+/* --------------------- 关联表 --------------------------- */
 /** 用户 - 角色表 */
 export const systemUserToRole = pgTable(
   "system_user_to_role",
@@ -164,7 +179,7 @@ export const systemDeptToRole = pgTable(
   })
 );
 
-/** 类型 */
+/* --------------------- 类型 --------------------------- */
 // 用户
 export type InsertSystemUser = typeof systemUser.$inferInsert;
 export type SelectSystemUser = typeof systemUser.$inferSelect;
@@ -193,6 +208,11 @@ export type SelectSystemDept = typeof systemDept.$inferSelect;
 export const insertSystemDeptSchema = createInsertSchema(systemDept);
 export const selectSystemDeptSchema = createSelectSchema(systemDept);
 
+// 登录日志
+export type InsertSystemLoginLog = typeof systemLoginLog.$inferInsert;
+export type SelectSystemLoginLog = typeof systemLoginLog.$inferSelect;
+export const insertSystemLoginLogSchema = createInsertSchema(systemLoginLog);
+export const selectSystemLoginLogSchema = createSelectSchema(systemLoginLog);
 // 测试
 // import { pgEnum } from 'drizzle-orm/pg-core';
 // export const enableEnum = pgEnum('enable', ['NORMAL', 'DISABLE']);

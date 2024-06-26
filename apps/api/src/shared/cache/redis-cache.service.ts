@@ -1,9 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { RedisCache } from 'cache-manager-ioredis-yet';
 import Redis, { Cluster } from 'ioredis';
 import ms from 'ms';
 import { ApiException } from '@/core/filter/api.exception';
+import { ErrorCode } from '@/common/constants/err-code.constants';
 
 const getVal = (value: any) => JSON.stringify(value) || '"undefined"';
 
@@ -17,12 +19,13 @@ export class RedisCacheService {
 
   async get<T>(key: string) {
     const val = await this.client.get(key);
-    if (val === undefined || val === null) {
-      // return undefined;
-      throw new ApiException('获取redis信息失败');
-    } else {
-      return JSON.parse(val) as T;
-    }
+    return JSON.parse(val as string) as T;
+    // if (val === undefined || val === null) {
+    //   // return undefined;
+    //   throw new ApiException(ErrorCode['REDIS_CACHE_NOT_FOUND']);
+    // } else {
+    //   return JSON.parse(val) as T;
+    // }
   }
 
   /** ttl: 毫秒 */

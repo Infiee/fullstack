@@ -1,19 +1,25 @@
 export enum ErrorCode {
   /** 通用错误 */
-  COMMON = '-1',
-  FORBIDDEN = '4003',
-  FORBIDDEN_ADMIN_USER_OPERATION = '4004',
-  FORBIDDEN_ADMIN_ROLE_OPERATION = '4005',
+  COMMON = -1,
+
+  LOGIN_EXPIRED = 401,
+
+  FORBIDDEN = 4003,
+  FORBIDDEN_ADMIN_USER_OPERATION = 4004,
+  FORBIDDEN_ADMIN_ROLE_OPERATION = 4005,
+
+  /** 缓存 */
+  REDIS_CACHE_EXPIRED = 3001,
+  REDIS_CACHE_NOT_FOUND = 3002,
 
   /** 用户相关 */
-  LOGIN_EXPIRED = '1000',
-  USER_DISABLED = '1001',
-  USER_NOT_FOUND = '1002',
-  USER_PASSWORD_ERROR = '1003',
+  USER_DISABLED = 1001,
+  USER_NOT_FOUND = 1002,
+  USER_PASSWORD_ERROR = 1003,
 
   /** 验证码相关 */
-  CAPTCHA_IN_VALID = '5001',
-  CAPTCHA_ERROR = '5002',
+  CAPTCHA_IN_VALID = 5001,
+  CAPTCHA_ERROR = 5002,
 
   /** 权限相关 */
 }
@@ -21,6 +27,10 @@ export enum ErrorCode {
 export const ErrorMessageMap = {
   /** 通用错误 */
   [ErrorCode.COMMON]: '业务异常',
+
+  /** 缓存 */
+  [ErrorCode.REDIS_CACHE_EXPIRED]: 'Redis缓存已过期',
+  [ErrorCode.REDIS_CACHE_NOT_FOUND]: 'Redis缓存不存在',
 
   /** 用户相关 */
   [ErrorCode.LOGIN_EXPIRED]: '登录已过期',

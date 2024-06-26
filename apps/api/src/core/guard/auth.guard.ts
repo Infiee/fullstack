@@ -1,8 +1,8 @@
-import { BusinessCode } from '@/common/constants/business-code.constant';
 import {
   ACCESS_TOKEN_KEY,
   PERSIST_SYSTEM_JWT_PAYLOAD_KEY,
 } from '@/common/constants/cache.constant';
+import { ErrorCode } from '@/common/constants/err-code.constants';
 import { AppConfigService } from '@/config/app-config.service';
 import { RedisCacheService } from '@/shared/cache/redis-cache.service';
 import { SharedService } from '@/shared/shared.service';
@@ -56,7 +56,7 @@ export class AuthGuard implements CanActivate {
       //   HttpStatus.TOO_MANY_REQUESTS,
       // );
       throw new UnauthorizedException({
-        code: BusinessCode.LOGIN_EXPIRED,
+        code: ErrorCode.LOGIN_EXPIRED,
         message: 'redis内accessToken校验失败,请重新登录',
       });
     }

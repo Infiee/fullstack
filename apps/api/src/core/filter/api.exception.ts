@@ -3,7 +3,7 @@
  * @ Create Time: 2024-03-12 10:27:21
  * @ Description:
  * @ Modified by: fei.wong
- * @ Modified time: 2024-06-17 18:29:57
+ * @ Modified time: 2024-06-26 17:53:54
  *
  * 用法：
  * throw new ApiException(ErrorCode.CAPTCHA_IN_VALID);
@@ -20,31 +20,39 @@ import {
 } from '@/common/constants/err-code.constants';
 
 export type ApiErrorResult = {
+  success?: boolean;
   data?: any;
   code?: ErrorMessageKey;
   message: ErrorMessageMapType[ErrorMessageKey] | string;
 };
 
 export class ApiException extends HttpException {
-  constructor(response: ApiErrorResult | string, statusCode?: HttpStatus) {
-    let result = response as ApiErrorResult;
-    if (typeof response === 'string') {
-      if (ErrorMessageMap[response]) {
-        result = {
-          code: response as ErrorMessageKey,
-          message: ErrorMessageMap[response],
-        };
-      } else {
-        result = {
-          code: ErrorCode.COMMON,
-          message: response,
-        };
-      }
+  constructor(
+    response: ApiErrorResult | string | number,
+    statusCode?: HttpStatus,
+  ) {
+    let result = {} as ApiErrorResult;
+    if (typeof response === 'number') {
+      result = {
+        success: false,
+        code: response as ErrorMessageKey,
+        message: ErrorMessageMap[response] || '未知Api异常信息',
+        data: null,
+      };
+    } else if (typeof response === 'object') {
+      result = response;
+    } else {
+      result = {
+        success: false,
+        code: ErrorCode.COMMON,
+        message: response,
+        data: null,
+      };
     }
     super(result, statusCode || HttpStatus.OK);
   }
 
-  forbidden() {
+  public forbidden() {
     throw new ApiException({
       message: ErrorMessageMap[ErrorCode.FORBIDDEN],
       code: ErrorCode.FORBIDDEN,

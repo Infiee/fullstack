@@ -200,8 +200,11 @@ onBeforeUnmount(() => {
                   :prefix-icon="useRenderIcon('ri:shield-keyhole-line')"
                 >
                   <template v-slot:append>
-                    <div class="cursor-pointer" @click="getVerifyCode">
-                      <img :src="imgCode" />
+                    <div
+                      class="cursor-pointer flex h-[40px] overflow-hidden"
+                      @click="getVerifyCode"
+                    >
+                      <img :src="imgCode" class="h-[40px] mt-[-3px]" />
                     </div>
                   </template>
                 </el-input>

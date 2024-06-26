@@ -119,11 +119,14 @@ export class AuthService {
       secret: this.config.get('JWT_REFRESH_SECRET'),
     });
     // 获取缓存的token
-    const cacheRefreshToken = await this.redis.get(
+    const cacheRefreshToken = await this.redis.get<string>(
       `${REFRESH_TOKEN_KEY}:${payload.id}`,
     );
     if (refreshToken !== cacheRefreshToken) {
-      throw new ApiException('refreshToken校验失败');
+      throw new ApiException({
+        code: ErrorCode['LOGIN_EXPIRED'],
+        message: 'refreshToken校验失败',
+      });
     }
     const user = await this.redis.get<SelectSystemUserResult>(
       `${PERSIST_SYSTEM_USER_KEY}:${payload!.id}`,

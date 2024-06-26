@@ -61,9 +61,11 @@ export const getDeptList = async () => {
 };
 
 /** 获取系统监控-在线用户列表 */
-export const getOnlineLogsList = (data?: object) => {
-  // return http.request<ResultTable>("post", "/online-logs", { data });
-  return { data: [] };
+export const getOnlineLogsList = async (
+  data: ClientInferRequest<typeof contract.monitorOnline.filterAll>["query"]
+) => {
+  const { body } = await client.monitorOnline.filterAll({ query: data });
+  return body;
 };
 
 /** 获取系统监控-登录日志列表 */

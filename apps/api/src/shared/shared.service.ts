@@ -24,7 +24,8 @@ export class SharedService {
       mathMax: 20,
       mathMin: 1,
       width: 100,
-      height: 30,
+      height: 40,
+      fontSize: 45,
     });
     return captcha;
   }

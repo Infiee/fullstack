@@ -7,8 +7,10 @@ export const apiResultSchema = <T extends ZodTypeAny>(dataSchema: T) => {
     success: z.boolean(),
     data: dataSchema,
     message: z.string(),
+    code: z.number().optional(),
   });
 };
+export type ApiResultType = z.infer<ReturnType<typeof apiResultSchema<any>>>;
 
 /** 路由元数据 */
 export type RouterMetadata = {
