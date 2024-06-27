@@ -8,7 +8,6 @@ export const ACCESS_TOKEN_KEY = 'system:accessToken';
 export const REFRESH_TOKEN_KEY = 'system:refreshToken';
 
 /** 持久化用户信息 */
-export const PERSIST_SYSTEM_JWT_PAYLOAD_KEY = 'system:jwt:payload';
 export const PERSIST_SYSTEM_USER_KEY = 'system:user';
 export const PERSIST_SYSTEM_USER_PERMISSIONS_KEY = 'system:permissions';
 export const PERSIST_SYSTEM_USER_ROLES_KEY = 'system:rolesKey';

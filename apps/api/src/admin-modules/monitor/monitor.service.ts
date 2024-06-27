@@ -7,10 +7,14 @@ import {
 } from '@/shared/database/drizzle/drizzle.service';
 import { InsertSystemLoginLog } from '@repo/drizzle';
 import { ServerInferRequest } from '@ts-rest/core';
+import { RedisCacheService } from '@/shared/cache/redis-cache.service';
 
 @Injectable()
 export class MonitorService {
-  constructor(private readonly drizzle: DrizzleService) {}
+  constructor(
+    private readonly drizzle: DrizzleService,
+    private readonly redis: RedisCacheService,
+  ) {}
 
   get schema() {
     return schema.systemLoginLog;
@@ -58,8 +62,20 @@ export class MonitorService {
       .returning(this.columnFields);
   }
 
-  /** 筛选所有部门 */
+  /** 在线用户 */
   async onlineFilterAll(
+    queryParams: ServerInferRequest<
+      typeof contract.monitorOnline.filterAll
+    >['query'],
+  ) {
+    console.log('queryParams--', queryParams);
+    // const keys = await this.redis.getScanKeys('monitor:*');
+    // return { list: users, total: total[0].count };
+    return { list: [], total: 0 };
+  }
+
+  /** 筛选所有 */
+  async loginLogFilterAll(
     queryParams: ServerInferRequest<
       typeof contract.monitorOnline.filterAll
     >['query'],

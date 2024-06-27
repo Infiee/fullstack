@@ -583,6 +583,9 @@ importers:
       '@repo/drizzle':
         specifier: workspace:^
         version: link:../../packages/drizzle
+      '@supercharge/request-ip':
+        specifier: ^1.2.0
+        version: 1.2.0
       '@ts-rest/core':
         specifier: ^3.45.2
         version: 3.45.2(zod@3.23.8)
@@ -2143,6 +2146,9 @@ packages:
 
   '@sinonjs/fake-timers@10.3.0':
     resolution: {integrity: sha512-V4BG07kuYSUkTCSBHG8G8TNhM+F19jXFWnQtzj+we8DrkpSBCee9Z3Ms8yiGer/dlmhe35/Xdgyo3/0rQKg7YA==}
+
+  '@supercharge/request-ip@1.2.0':
+    resolution: {integrity: sha512-wlt6JW69MHqLY2M6Sm/jVyCojNRKq2CBvwH0Hbx24SFhDQQGkgEjeKxVutDxHSyrWixFaOSLXC27euzxijhyMQ==}
 
   '@sxzz/popperjs-es@2.11.7':
     resolution: {integrity: sha512-Ccy0NlLkzr0Ex2FKvh2X+OyERHXJ88XJ1MXtsI9y9fGexlaXaVTPzBCRBwIxFkORuOb+uBqeu+RqnpgYTEZRUQ==}
@@ -8515,6 +8521,8 @@ snapshots:
   '@sinonjs/fake-timers@10.3.0':
     dependencies:
       '@sinonjs/commons': 3.0.1
+
+  '@supercharge/request-ip@1.2.0': {}
 
   '@sxzz/popperjs-es@2.11.7': {}
 

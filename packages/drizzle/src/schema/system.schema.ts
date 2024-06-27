@@ -58,7 +58,7 @@ export const systemMenu = pgTable("system_menu", {
   // 菜单类型（0代表菜单、1代表iframe、2代表外链、3代表按钮）
   menuType: smallint("menu_type").notNull(),
   // 权限标识
-  auths: text("permission_key"),
+  auths: text("auths"),
   // 路由地址
   path: text("path"),
   // 路由名

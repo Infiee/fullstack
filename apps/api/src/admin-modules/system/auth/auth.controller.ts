@@ -1,9 +1,10 @@
-import { Controller, UseGuards } from '@nestjs/common';
+import { Controller, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { TsRestHandler, tsRestHandler } from '@ts-rest/nest';
 import { contract } from '@repo/contract';
 import { AuthGuard } from '@/core/guard/auth.guard';
 import { ApiResult } from '@/common/utils/api-result';
+import { FastifyRequest } from 'fastify';
 
 @Controller()
 export class AuthController {
@@ -27,18 +28,18 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @TsRestHandler(contract.systemAuth.getInfo)
-  getInfo() {
+  getInfo(@Request() req: FastifyRequest) {
     return tsRestHandler(contract.systemAuth.getInfo, async () => {
-      const data = await this.authService.getInfo();
+      const data = await this.authService.getInfo(req);
       return { status: 200, body: ApiResult.ok(data) };
     });
   }
 
   @UseGuards(AuthGuard)
   @TsRestHandler(contract.systemAuth.getRouters)
-  getRouters() {
+  getRouters(@Request() req: FastifyRequest) {
     return tsRestHandler(contract.systemAuth.getRouters, async () => {
-      const routers = await this.authService.getRouters();
+      const routers = await this.authService.getRouters(req);
       return { status: 200, body: ApiResult.ok(routers) };
     });
   }

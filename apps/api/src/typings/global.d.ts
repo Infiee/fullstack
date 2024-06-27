@@ -18,5 +18,13 @@ declare global {
   }
 }
 
+/** 给fastify 上的req扩展user对象声明 */
+declare module 'fastify' {
+  interface FastifyRequest {
+    user?: JWT.Payload;
+    realIp: string;
+  }
+}
+
 // 如果你的模块没有导出任何内容，你将需要这一行。否则删除
 export {};

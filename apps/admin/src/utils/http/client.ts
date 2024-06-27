@@ -8,7 +8,7 @@ import type {
 } from "axios";
 import { initClient } from "@ts-rest/core";
 import type { ApiFetcherArgs, ClientInferResponseBody } from "@ts-rest/core";
-import { ApiResultType, contract } from "@repo/contract";
+import { type ApiResultType, contract } from "@repo/contract";
 import NProgress from "../progress";
 import { formatToken, getToken } from "@/utils/auth";
 
@@ -45,7 +45,7 @@ export const client = initClient(contract, {
     return http
       .request<AxiosResponse<any, any>>(method as RequestMethods, path, params)
       .then(result => {
-        console.log("result--", result);
+        // console.log("result--", result);
         const data = result.data as ApiResultType;
         if (!data.success) {
           message(data?.message, {

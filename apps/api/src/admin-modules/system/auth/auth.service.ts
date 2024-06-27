@@ -15,7 +15,6 @@ import { RedisCacheService } from '@/shared/cache/redis-cache.service';
 import {
   ACCESS_TOKEN_KEY,
   CAPTCHA_IMAGE_KEY,
-  PERSIST_SYSTEM_JWT_PAYLOAD_KEY,
   PERSIST_SYSTEM_USER_KEY,
   REFRESH_TOKEN_KEY,
 } from '@/common/constants/cache.constant';
@@ -25,6 +24,8 @@ import { UserService } from '../user/user.service';
 import { comparePassword } from '@/common/utils/password';
 import { ApiException } from '@/core/filter/api.exception';
 import { ErrorCode } from '@/common/constants/err-code.constants';
+import { FastifyRequest } from 'fastify';
+import { ADMIN_PERMISSION } from '@/common/constants/admin.constant';
 
 @Injectable()
 export class AuthService {
@@ -184,12 +185,9 @@ export class AuthService {
   }
 
   /** 获取用户信息 */
-  async getInfo() {
-    const payload = await this.redis.get<JWT.Payload>(
-      `${PERSIST_SYSTEM_JWT_PAYLOAD_KEY}`,
-    );
+  async getInfo(req: FastifyRequest) {
     const user = await this.redis.get<SelectSystemUserResult>(
-      `${PERSIST_SYSTEM_USER_KEY}:${payload!.id}`,
+      `${PERSIST_SYSTEM_USER_KEY}:${req.user?.id}`,
     );
 
     // const userData = (await this.userService.findById(payload.id))[0];
@@ -204,31 +202,23 @@ export class AuthService {
 
     // 聚合为一条查询语句，相比上面分次查询效率高一点
     const relationData = await this.db.query.systemUser.findMany({
-      where: eq(schema.systemUser.id, user!.id),
+      where: eq(schema.systemUser.id, user.id),
       columns: { password: false },
       with: {
         systemUserToRole: {
           orderBy: [asc(schema.systemUserToRole.roleId)],
-          columns: {
-            // roleId: false,
-            userId: false,
-          },
+          columns: { roleId: false, userId: false },
           with: {
-            systemRole: true,
-            // systemRole: {
-            //   with: {
-            //     systemMenuToRole: {
-            //       orderBy: [asc(schema.systemMenuToRole.menuId)],
-            //       columns: {
-            //         menuId: false,
-            //         roleId: false,
-            //       },
-            //       with: {
-            //         systemMenu: true,
-            //       },
-            //     },
-            //   },
-            // },
+            // systemRole: true,
+            systemRole: {
+              with: {
+                systemMenuToRole: {
+                  orderBy: [asc(schema.systemMenuToRole.menuId)],
+                  columns: { menuId: false, roleId: false },
+                  with: { systemMenu: true },
+                },
+              },
+            },
           },
         },
       },
@@ -238,24 +228,29 @@ export class AuthService {
     const permissions: string[] = [];
     systemUserToRole.map((i) => {
       roles.push(i.systemRole.code);
-      // i.systemRole.systemMenuToRole.map((j) => {
-      //   data.permissions.push(j.systemMenu.permissionKey);
-      // });
+      i.systemRole.systemMenuToRole.map((j) => {
+        if (j.systemMenu.auths) {
+          permissions.push(j.systemMenu.auths);
+        }
+      });
     });
     return {
       user: userData,
       roles: roles,
-      permissions: permissions,
+      permissions: this.sharedService.isAdmin(user.id)
+        ? [ADMIN_PERMISSION]
+        : permissions,
     };
   }
 
   /** 获取路由信息 */
-  async getRouters() {
-    const payload = await this.redis.get<JWT.Payload>(
-      `${PERSIST_SYSTEM_JWT_PAYLOAD_KEY}`,
-    );
+  async getRouters(req: FastifyRequest) {
+    if (!req.user) {
+      throw new ApiException('获取req用户信息不存在');
+    }
+    const userId = req.user.id;
     // 管理员
-    const isAdmin = this.sharedService.isAdmin(payload?.id);
+    const isAdmin = this.sharedService.isAdmin(userId);
     // TODO：权限判断 - 管理员 - 获取所有菜单
     if (isAdmin) {
       const menus = await this.db.query.systemMenu.findMany({
@@ -266,7 +261,7 @@ export class AuthService {
     }
     // 非管理员
     const roleRelations = await this.db.query.systemUserToRole.findMany({
-      where: eq(schema.systemUserToRole.userId, payload!.id),
+      where: eq(schema.systemUserToRole.userId, userId),
     });
     const roleIds = roleRelations.map((i) => i.roleId);
     if (roleIds.length === 0) return [];

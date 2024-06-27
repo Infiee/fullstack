@@ -1,7 +1,4 @@
-import {
-  ACCESS_TOKEN_KEY,
-  PERSIST_SYSTEM_JWT_PAYLOAD_KEY,
-} from '@/common/constants/cache.constant';
+import { ACCESS_TOKEN_KEY } from '@/common/constants/cache.constant';
 import { ErrorCode } from '@/common/constants/err-code.constants';
 import { AppConfigService } from '@/config/app-config.service';
 import { RedisCacheService } from '@/shared/cache/redis-cache.service';
@@ -15,7 +12,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { FastifyRequest } from 'fastify';
-// import { TsRestException } from '@ts-rest/nest';
+import { getClientIp } from '@supercharge/request-ip';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -29,17 +26,16 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<FastifyRequest>();
     const token = this.sharedService.extractTokenFromHeader(request);
     if (!token) {
-      // throw new TsRestException(undefined as unknown as any, {
-      //   status: 401,
-      //   body: { message: '未发现accessToken' },
-      // });
-      throw new UnauthorizedException({
-        message: '未发现accessToken',
-      });
+      throw new UnauthorizedException('未发现accessToken');
     }
 
     const payload = await this.sharedService.validateToken(token);
-    // request['user'] = payload;
+    // TODO: 认证通过后挂载全局user对象到request
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { iat, exp, ...user } = payload;
+    request.user = user;
+    // 真实ip
+    request.realIp = getClientIp(request) as string;
 
     // TODO: 校验Redis内 accessToken，防止拿到未过期的token 就认证通过了
     const accessToken = await this.redis.get<string>(
@@ -47,22 +43,14 @@ export class AuthGuard implements CanActivate {
     );
     // 当token过期或和传递过来的token不匹配的时候抛出错误
     if (!accessToken || token !== accessToken) {
-      // throw new TsRestException(undefined as unknown as any, {
-      //   status: 401,
-      //   body: { message: 'redis内accessToken校验失败,请重新登录' },
-      // });
-      // throw new HttpException(
-      //   { message: 'redis内accessToken校验失败,请重新登录' },
-      //   HttpStatus.TOO_MANY_REQUESTS,
-      // );
-      throw new UnauthorizedException({
-        code: ErrorCode.LOGIN_EXPIRED,
-        message: 'redis内accessToken校验失败,请重新登录',
-      });
+      throw new UnauthorizedException(
+        {
+          code: ErrorCode.LOGIN_EXPIRED,
+          message: 'redis内accessToken校验失败,请重新登录',
+        },
+        //   HttpStatus.TOO_MANY_REQUESTS,
+      );
     }
-    // 设置payload
-    await this.redis.persistSet(`${PERSIST_SYSTEM_JWT_PAYLOAD_KEY}`, payload);
-
     return true;
   }
 }

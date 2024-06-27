@@ -2,7 +2,7 @@ export * from "./common/common";
 export * from "./system/index";
 export * from "./monitor/index";
 
-import { initContract } from "@ts-rest/core";
+import { RouterOptions, initContract } from "@ts-rest/core";
 import {
   systemUser,
   systemRole,

@@ -15,10 +15,14 @@ import { FastifyReply } from 'fastify';
 import { fromZodError } from 'zod-validation-error';
 import { ApiErrorResult } from './api.exception';
 import { ErrorCode } from '@/common/constants/err-code.constants';
+import { TokenExpiredError } from '@nestjs/jwt';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
+    if (exception && exception.constructor && exception.constructor.name) {
+      console.log(`异常捕获 instance: ${exception.constructor.name}`);
+    }
     if (exception instanceof HttpException) {
       // if (exception instanceof ThrottlerException) {
       //   this.catchThrottlerException(exception, host);
@@ -30,9 +34,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
       } else {
         this.catchRestException(exception, host);
       }
-      // if (exception && exception.constructor && exception.constructor.name) {
-      //   console.log(`异常捕获 instance: ${exception.constructor.name}`);
-      // }
+    } else if (exception instanceof TokenExpiredError) {
+      // 当jwtService.verify 过期的时候
+      this.catchTokenExpiredException(exception, host);
     } else {
       this.catchException(exception, host);
     }
@@ -45,6 +49,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     // console.log('zod错误--', exception);
     const error = exception.body || exception.query || exception.pathParams;
     response.status(HttpStatus.BAD_REQUEST).send({
+      success: false,
       code: -1,
       // message: exception.body.errors[0].message,
       message: error
@@ -61,6 +66,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<FastifyReply>();
     response.status(exception.getStatus() || HttpStatus.BAD_REQUEST).send({
+      success: false,
       code: -1,
       message: fromZodError(exception.error).toString(),
     });
@@ -73,10 +79,25 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const restResponse = exception.getResponse() as ApiErrorResult;
 
     response.status(exception.getStatus() || HttpStatus.BAD_REQUEST).send({
-      success: restResponse.success || false,
+      success: false,
       data: restResponse.data || null,
       code: restResponse?.code || ErrorCode.COMMON,
       message: restResponse.message,
+    });
+  }
+
+  /** jwt token过期 */
+  catchTokenExpiredException(
+    exception: TokenExpiredError,
+    host: ArgumentsHost,
+  ) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse<FastifyReply>();
+    response.status(HttpStatus.BAD_REQUEST).send({
+      success: false,
+      data: null,
+      code: ErrorCode.LOGIN_EXPIRED,
+      message: 'token已过期,请重新登录' || exception.message,
     });
   }
 
@@ -86,6 +107,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<FastifyReply>();
 
     response.status(HttpStatus.BAD_REQUEST).send({
+      success: false,
+      data: null,
       code: exception.code || -1,
       message: exception.message || exception || '捕获异常',
     });
