@@ -24,7 +24,9 @@ export const client = initClient(contract, {
   baseHeaders: {
     "Content-Type": "application/json"
   },
-  throwOnUnknownStatus: true,
+  // 如果status和合约定义的不一样 是否报错
+  throwOnUnknownStatus: false,
+  // validateResponse: false,
   api: async (args: ApiFetcherArgs) => {
     // 开启进度条动画
     NProgress.start();
