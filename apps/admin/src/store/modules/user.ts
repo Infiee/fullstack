@@ -10,6 +10,8 @@ import {
 import { type RefreshTokenResult, getLogin, refreshTokenApi } from "@/api/user";
 import { useMultiTagsStoreHook } from "./multiTags";
 import { type DataInfo, setToken, removeToken, userKey } from "@/utils/auth";
+// import type { contract } from "@repo/contract";
+// import type { ClientInferResponses } from "@ts-rest/core";
 
 export const useUserStore = defineStore({
   id: "pure-user",

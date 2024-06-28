@@ -6,14 +6,12 @@ declare global {
 
   namespace JWT {
     interface Payload {
-      username: string;
+      uuid: string;
       id: number;
-      /** 过期时间 */
-      expireTime: number;
     }
     interface VerifyPayload extends Payload {
       iat: number;
-      exp?: number;
+      exp: number;
     }
   }
 }

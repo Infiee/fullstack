@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import uaParser from 'ua-parser-js';
+import { UAParser } from 'ua-parser-js';
 import svgCaptcha from 'svg-captcha';
 import { AppConfigService } from '@/config/app-config.service';
 import { FastifyRequest } from 'fastify';
@@ -32,7 +32,7 @@ export class SharedService {
 
   /** 获取ua信息 */
   getUaInfo(ua: string) {
-    const info = uaParser(ua);
+    const info = UAParser(ua);
     info.browser.name = info.browser.name || '未知';
     info.os.name = info.os.name || '未知';
     return info;
@@ -66,7 +66,7 @@ export class SharedService {
 
     /** 计算过期剩余时间 */
     const currentTime = Math.floor(Date.now() / 1000);
-    const remainingTime = payload.expireTime - currentTime;
+    const remainingTime = payload.exp - currentTime;
     /** 30分钟内续期 */
     const threshold = 60 * 30;
     // const threshold = 60 * 60 * 24;

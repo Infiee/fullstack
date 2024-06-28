@@ -3,7 +3,7 @@
  * @ Create Time: 2024-03-12 10:27:21
  * @ Description:
  * @ Modified by: fei.wong
- * @ Modified time: 2024-06-26 17:53:54
+ * @ Modified time: 2024-06-28 10:15:52
  *
  * 用法：
  * throw new ApiException(ErrorCode.CAPTCHA_IN_VALID);
@@ -37,7 +37,7 @@ export class ApiException extends HttpException {
         success: false,
         code: response as ErrorMessageKey,
         message: ErrorMessageMap[response] || '未知Api异常信息',
-        data: null,
+        // data: null,
       };
     } else if (typeof response === 'object') {
       result = response;
@@ -46,7 +46,7 @@ export class ApiException extends HttpException {
         success: false,
         code: ErrorCode.COMMON,
         message: response,
-        data: null,
+        // data: null,
       };
     }
     super(result, statusCode || HttpStatus.OK);

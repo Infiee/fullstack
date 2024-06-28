@@ -4,8 +4,6 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { RedisCache } from 'cache-manager-ioredis-yet';
 import Redis, { Cluster } from 'ioredis';
 import ms from 'ms';
-import { ApiException } from '@/core/filter/api.exception';
-import { ErrorCode } from '@/common/constants/err-code.constants';
 
 const getVal = (value: any) => JSON.stringify(value) || '"undefined"';
 
@@ -19,13 +17,12 @@ export class RedisCacheService {
 
   async get<T>(key: string) {
     const val = await this.client.get(key);
-    return JSON.parse(val as string) as T;
-    // if (val === undefined || val === null) {
-    //   // return undefined;
-    //   throw new ApiException(ErrorCode['REDIS_CACHE_NOT_FOUND']);
-    // } else {
-    //   return JSON.parse(val) as T;
-    // }
+    // return JSON.parse(val as string) as T;
+    if (val === undefined || val === null) {
+      return undefined;
+    } else {
+      return JSON.parse(val) as T;
+    }
   }
 
   /** ttl: 毫秒 */
@@ -45,10 +42,10 @@ export class RedisCacheService {
     return this.client.reset();
   }
 
-  /** TODO: 设置持久化存储为7d，防止长期不登录一直占用空间 */
+  /** TODO: 设置持久化存储为1d，防止长期不登录一直占用空间 */
   persistSet(key: string, value: any) {
     // return this.client.set(key, value);
-    return this.set(key, value, ms('7d'));
+    return this.set(key, value, ms('1d'));
   }
 
   async cleanUserCache(userId: number | string) {

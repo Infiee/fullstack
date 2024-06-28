@@ -8,6 +8,13 @@ export const REGEXP_PWD =
 
 /** 登录校验 */
 const loginRules = reactive(<FormRules>{
+  username: [
+    {
+      required: true,
+      message: transformI18n($t("login.pureUsernameReg")),
+      trigger: "blur"
+    }
+  ],
   password: [
     {
       validator: (rule, value, callback) => {
@@ -19,6 +26,13 @@ const loginRules = reactive(<FormRules>{
           callback();
         }
       },
+      trigger: "blur"
+    }
+  ],
+  code: [
+    {
+      required: true,
+      message: transformI18n($t("login.pureCodeReg")),
       trigger: "blur"
     }
   ]

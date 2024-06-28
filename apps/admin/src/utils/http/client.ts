@@ -44,35 +44,31 @@ export const client = initClient(contract, {
 
     return http
       .request<AxiosResponse<any, any>>(method as RequestMethods, path, params)
-      .then(result => {
-        // console.log("result--", result);
-        const data = result.data as ApiResultType;
+      .then(res => {
+        // console.log("res--", res);
+        const data = res.data as ApiResultType;
         if (!data.success) {
-          message(data?.message, {
-            type: "error",
-            duration: 2500
-          });
           if (data.code === 401) {
+            message(data?.message, { type: "error", duration: 2500 });
             useUserStoreHook().logOut();
           }
-          return;
         }
         return {
-          status: result.status,
-          body: result.data,
-          headers: result.headers as unknown as Headers
+          status: res.status,
+          body: res.data,
+          headers: res.headers as unknown as Headers
         };
       })
       .catch(err => {
-        const data = err?.response?.data;
-        const result = err?.response as AxiosResponse;
-        if (data.code === 401) {
+        const res = err?.response as AxiosResponse;
+        console.log("api异常：", res);
+        if ([401, 403].includes(res.status)) {
           useUserStoreHook().logOut();
         }
         return {
-          status: result.status,
-          body: result.data,
-          headers: result.headers as unknown as Headers
+          status: res.status,
+          body: res.data,
+          headers: res.headers as unknown as Headers
         };
       });
   }

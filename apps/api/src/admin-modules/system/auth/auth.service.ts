@@ -1,8 +1,8 @@
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import ms from 'ms';
 import dayjs from 'dayjs';
-import { asc, eq, inArray, sql } from 'drizzle-orm';
+import { asc, eq, sql } from 'drizzle-orm';
 
 import { SystemLoginDto } from '@repo/contract';
 import {
@@ -15,6 +15,7 @@ import { RedisCacheService } from '@/shared/cache/redis-cache.service';
 import {
   ACCESS_TOKEN_KEY,
   CAPTCHA_IMAGE_KEY,
+  PERSIST_ADMIN_USER_KEY,
   PERSIST_SYSTEM_USER_KEY,
   REFRESH_TOKEN_KEY,
 } from '@/common/constants/cache.constant';
@@ -23,7 +24,10 @@ import { SelectSystemUserResult, SystemStatusEnum } from '@repo/drizzle';
 import { UserService } from '../user/user.service';
 import { comparePassword } from '@/common/utils/password';
 import { ApiException } from '@/core/filter/api.exception';
-import { ErrorCode } from '@/common/constants/err-code.constants';
+import {
+  ErrorCode,
+  ErrorMessageMap,
+} from '@/common/constants/err-code.constants';
 import { FastifyRequest } from 'fastify';
 import { ADMIN_PERMISSION } from '@/common/constants/admin.constant';
 
@@ -70,9 +74,7 @@ export class AuthService {
   /** 校验验证码 */
   async validateCaptcha(uuid: string, code: string) {
     const text = await this.redis.get<string>(`${CAPTCHA_IMAGE_KEY}:${uuid}`);
-    if (!text) {
-      throw new ApiException(ErrorCode.CAPTCHA_IN_VALID);
-    }
+    if (!text) throw new ApiException(ErrorCode.CAPTCHA_IN_VALID);
     if (code.toLowerCase() !== text.toLowerCase()) {
       throw new ApiException(ErrorCode.CAPTCHA_ERROR);
     }
@@ -80,37 +82,47 @@ export class AuthService {
   }
 
   /** 登录 */
-  async login(dto: SystemLoginDto) {
+  async login(dto: SystemLoginDto, clientInfo: any) {
     const { username, password, uuid, code } = dto;
     const data = await this.userService.findOne('username', username);
-    if (data.length === 0) {
-      throw new ApiException(ErrorCode.USER_NOT_FOUND);
-    }
+    if (data.length === 0) throw new ApiException(ErrorCode.USER_NOT_FOUND);
+
     const { password: userPassword, ...user } = data[0];
     const isEqual = await comparePassword(password, userPassword);
-    if (!isEqual) {
-      throw new ApiException(ErrorCode.USER_PASSWORD_ERROR);
-    }
+    if (!isEqual) throw new ApiException(ErrorCode.USER_PASSWORD_ERROR);
     if (user.status === SystemStatusEnum['DISABLED']) {
       throw new ApiException(ErrorCode.USER_DISABLED);
     }
+
     await this.validateCaptcha(uuid, code);
-    const token = await this.setToken(user);
-    await this.redis.persistSet(`${PERSIST_SYSTEM_USER_KEY}:${user.id}`, user);
+    const uid = generateHash();
+    const token = await this.setToken(user, uid);
+    const metaData = {
+      ...clientInfo,
+      ...user,
+    };
+    // TODO: 单用户单端登录
+    // await this.redis.persistSet(`${PERSIST_SYSTEM_USER_KEY}:${user.id}`, user);
+    // TODO: 单用户多端登录
+    await this.redis.persistSet(
+      `${PERSIST_ADMIN_USER_KEY}:${user.id}:${uid}`,
+      metaData,
+    );
+
     const roles = await this.userService.getRoles(user.id);
     const { avatar, nickname } = user;
     return { ...token, roles, username, avatar, nickname };
   }
 
   /** jwt生成token */
-  async generateToken(user: SelectSystemUserResult, options?: JwtSignOptions) {
-    const payload: JWT.Payload = {
-      username: user.username,
-      id: user.id,
-      expireTime: dayjs()
-        .add(ms(this.config.get('JWT_EXPIRESIN')), 'ms')
-        .unix(),
-    };
+  async generateToken(payload: JWT.Payload, options?: JwtSignOptions) {
+    // const payload: JWT.Payload = {
+    //   username: payload.username,
+    //   id: payload.id,
+    //   expireTime: dayjs()
+    //     .add(ms(this.config.get('JWT_EXPIRESIN')), 'ms')
+    //     .unix(),
+    // };
     return this.jwtService.sign(payload, options);
   }
 
@@ -124,31 +136,33 @@ export class AuthService {
       `${REFRESH_TOKEN_KEY}:${payload.id}`,
     );
     if (refreshToken !== cacheRefreshToken) {
-      throw new ApiException({
-        code: ErrorCode['LOGIN_EXPIRED'],
-        message: 'refreshToken校验失败',
-      });
+      throw new UnauthorizedException(
+        ErrorMessageMap[ErrorCode['LOGIN_EXPIRED']],
+      );
     }
     const user = await this.redis.get<SelectSystemUserResult>(
-      `${PERSIST_SYSTEM_USER_KEY}:${payload!.id}`,
+      `${PERSIST_SYSTEM_USER_KEY}:${payload.id}`,
     );
     if (!user) throw new ApiException('redis用户不存在');
-    return this.setToken(user);
+    const uid = await generateHash();
+    return this.setToken(user, uid);
   }
 
   /** TODO: 设置双token */
-  async setToken(user: SelectSystemUserResult) {
+  async setToken(user: SelectSystemUserResult, uuid: string) {
+    const payload: JWT.Payload = { id: user.id, uuid };
     const [accessToken, refreshToken] = await Promise.all([
-      this.generateToken(user, {
+      this.generateToken(payload, {
         secret: this.config.get('JWT_SECRET'),
         expiresIn: this.config.get('JWT_EXPIRESIN'),
       }),
-      this.generateToken(user, {
+      this.generateToken(payload, {
         secret: this.config.get('JWT_REFRESH_SECRET'),
         expiresIn: this.config.get('JWT_REFRESH_EXPIRESIN'),
       }),
     ]);
-    const expires = this.jwtService.decode<JWT.Payload>(accessToken);
+    const expires = this.jwtService.decode<JWT.VerifyPayload>(accessToken);
+    console.log('decode expires--', expires);
     this.redis.set(
       `${ACCESS_TOKEN_KEY}:${user.id}`,
       accessToken,
@@ -162,86 +176,128 @@ export class AuthService {
     return {
       accessToken,
       refreshToken,
-      expires: dayjs.unix(expires.expireTime).valueOf(),
+      expires: dayjs.unix(expires.exp).valueOf(),
     };
   }
 
   /** TODO: 设置单token */
-  async setSingleToken(user: SelectSystemUserResult) {
-    const [accessToken] = await Promise.all([
-      this.generateToken(user, {
-        secret: this.config.get('JWT_SECRET'),
-        // TODO: token设置为不过期
-        // expiresIn: this.config.get('JWT_EXPIRESIN'),
-      }),
-    ]);
-    // TODO: redis token设置过期时间
-    this.redis.set(
-      `${ACCESS_TOKEN_KEY}:${user.id}`,
-      accessToken,
-      ms(this.config.get('JWT_EXPIRESIN')),
-    );
-    return { accessToken };
-  }
+  // async setSingleToken(user: SelectSystemUserResult) {
+  //   const accessToken = await this.generateToken(user, {
+  //     secret: this.config.get('JWT_SECRET'),
+  //     // TODO: token设置为不过期
+  //     // expiresIn: this.config.get('JWT_EXPIRESIN'),
+  //   });
+  //   this.redis.set(
+  //     `${ACCESS_TOKEN_KEY}:${user.id}`,
+  //     accessToken,
+  //     ms(this.config.get('JWT_EXPIRESIN')),
+  //   );
+  //   return { accessToken };
+  // }
 
   /** 获取用户信息 */
   async getInfo(req: FastifyRequest) {
-    const user = await this.redis.get<SelectSystemUserResult>(
-      `${PERSIST_SYSTEM_USER_KEY}:${req.user?.id}`,
-    );
+    const userId = req.user?.id;
+    if (!userId) throw new UnauthorizedException('未获取到user信息,请重新登录');
 
-    // const userData = (await this.userService.findById(payload.id))[0];
-    // const userRoleRelations = await this.db.query.systemUserToRole.findMany({
-    //   where: eq(schema.systemUserToRole.userId, user.id),
-    // });
-    // const roleIds = userRoleRelations.map((i) => i.roleId);
-    // const roles = await this.db.query.systemRole.findMany({
-    //   where: inArray(schema.systemRole.id, roleIds),
-    // });
-    // const data = { user: userData, roles };
-
-    // 聚合为一条查询语句，相比上面分次查询效率高一点
-    const relationData = await this.db.query.systemUser.findMany({
-      where: eq(schema.systemUser.id, user.id),
-      columns: { password: false },
-      with: {
-        systemUserToRole: {
-          orderBy: [asc(schema.systemUserToRole.roleId)],
-          columns: { roleId: false, userId: false },
-          with: {
-            // systemRole: true,
-            systemRole: {
-              with: {
-                systemMenuToRole: {
-                  orderBy: [asc(schema.systemMenuToRole.menuId)],
-                  columns: { menuId: false, roleId: false },
-                  with: { systemMenu: true },
-                },
+    // 聚合为一条查询语句，相比分次查询效率高一点
+    const [user, relationData] = await Promise.all([
+      this.db.query.systemUser.findMany({
+        where: eq(schema.systemUser.id, userId),
+        columns: { password: false },
+      }),
+      this.db.query.systemUserToRole.findMany({
+        where: eq(schema.systemUserToRole.userId, userId),
+        columns: {},
+        with: {
+          systemRole: {
+            with: {
+              systemMenuToRole: {
+                orderBy: [asc(schema.systemMenuToRole.menuId)],
+                columns: {},
+                with: { systemMenu: true },
               },
             },
           },
         },
+      }),
+    ]);
+    const { roles, permissions } = relationData.reduce<{
+      roles: string[];
+      permissions: string[];
+    }>(
+      (acc, item) => {
+        acc.roles.push(item.systemRole.code);
+        item.systemRole.systemMenuToRole.forEach((menuToRole) => {
+          if (menuToRole.systemMenu.auths) {
+            acc.permissions.push(menuToRole.systemMenu.auths);
+          }
+        });
+        return acc;
       },
-    });
-    const { systemUserToRole, ...userData } = relationData[0];
-    const roles: string[] = [];
-    const permissions: string[] = [];
-    systemUserToRole.map((i) => {
-      roles.push(i.systemRole.code);
-      i.systemRole.systemMenuToRole.map((j) => {
-        if (j.systemMenu.auths) {
-          permissions.push(j.systemMenu.auths);
-        }
-      });
-    });
+      { roles: [], permissions: [] },
+    );
+
     return {
-      user: userData,
+      user: user[0],
       roles: roles,
-      permissions: this.sharedService.isAdmin(user.id)
+      permissions: this.sharedService.isAdmin(userId)
         ? [ADMIN_PERMISSION]
         : permissions,
     };
   }
+
+  // async getInfo(req: FastifyRequest) {
+  //   const userId = req.user?.id;
+  //   if (!userId) throw new UnauthorizedException('未获取到user信息,请重新登录');
+
+  //   // 聚合为一条查询语句，相比分次查询效率高一点
+  //   const relationData = await this.db.query.systemUser.findMany({
+  //     where: eq(schema.systemUser.id, userId),
+  //     columns: { password: false },
+  //     with: {
+  //       dept: true,
+  //       systemUserToRole: {
+  //         orderBy: [asc(schema.systemUserToRole.roleId)],
+  //         columns: {},
+  //         with: {
+  //           systemRole: {
+  //             with: {
+  //               systemMenuToRole: {
+  //                 orderBy: [asc(schema.systemMenuToRole.menuId)],
+  //                 columns: {},
+  //                 with: { systemMenu: true },
+  //               },
+  //             },
+  //           },
+  //         },
+  //       },
+  //     },
+  //   });
+  //   const { systemUserToRole, ...user } = relationData[0];
+  //   const { roles, permissions } = systemUserToRole.reduce<{
+  //     roles: string[];
+  //     permissions: string[];
+  //   }>(
+  //     (acc, item) => {
+  //       acc.roles.push(item.systemRole.code);
+  //       item.systemRole.systemMenuToRole.forEach((menuToRole) => {
+  //         if (menuToRole.systemMenu.auths) {
+  //           acc.permissions.push(menuToRole.systemMenu.auths);
+  //         }
+  //       });
+  //       return acc;
+  //     },
+  //     { roles: [], permissions: [] },
+  //   );
+  //   return {
+  //     user: user,
+  //     roles: roles,
+  //     permissions: this.sharedService.isAdmin(userId)
+  //       ? [ADMIN_PERMISSION]
+  //       : permissions,
+  //   };
+  // }
 
   /** 获取路由信息 */
   async getRouters(req: FastifyRequest) {
@@ -260,46 +316,24 @@ export class AuthService {
       return menuToTree(menus);
     }
     // 非管理员
-    const roleRelations = await this.db.query.systemUserToRole.findMany({
+    const relationData = await this.db.query.systemUserToRole.findMany({
       where: eq(schema.systemUserToRole.userId, userId),
+      columns: {},
+      with: {
+        systemRole: {
+          columns: {},
+          with: {
+            systemMenuToRole: {
+              columns: {},
+              with: { systemMenu: true },
+            },
+          },
+        },
+      },
     });
-    const roleIds = roleRelations.map((i) => i.roleId);
-    if (roleIds.length === 0) return [];
-    const menuRelations = await this.db.query.systemMenuToRole.findMany({
-      where: inArray(schema.systemMenuToRole.roleId, roleIds),
-    });
-    const menuIds = menuRelations.map((i) => i.menuId);
-    if (menuIds.length === 0) return [];
-    const menus = await this.db.query.systemMenu.findMany({
-      where: inArray(schema.systemMenu.id, menuIds),
-    });
-
-    // const menus = (await this.db.query.systemUserToRole.findMany({
-    //   where: eq(schema.systemUserToRole.userId, payload.id),
-    //   with: {
-    //     systemRole: {
-    //       with: {
-    //         systemMenuToRole: {
-    //           with: {
-    //             systemMenu: true,
-    //           },
-    //         },
-    //       },
-    //     },
-    //   },
-    // })) as any;
-    // return menus as any;
-
-    // const menus = await this.db.query.systemMenu.findMany({
-    //   offset: 0,
-    // });
-    // const menus = await this.db.select().from(schema.systemMenu);
-
-    // menus.map(menu=>{
-    //   menu.roles.map(i=>{
-    //     i.role
-    //   })
-    // })
+    const menus = relationData.flatMap((menu) =>
+      menu.systemRole.systemMenuToRole.map((role) => role.systemMenu),
+    );
     return menuToTree(menus);
   }
 }

@@ -631,9 +631,6 @@ importers:
       portfinder:
         specifier: ^1.0.32
         version: 1.0.32
-      postgres:
-        specifier: ^3.4.4
-        version: 3.4.4
       radash:
         specifier: ^12.1.0
         version: 12.1.0
@@ -650,8 +647,8 @@ importers:
         specifier: ^5.22.11
         version: 5.22.11
       ua-parser-js:
-        specifier: ^1.0.38
-        version: 1.0.38
+        specifier: 2.0.0-beta.3
+        version: 2.0.0-beta.3
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -6707,8 +6704,9 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  ua-parser-js@1.0.38:
-    resolution: {integrity: sha512-Aq5ppTOfvrCMgAPneW1HfWj66Xi7XL+/mIy996R1/CLS/rcyJQm6QZdsKrUeivDFQ+Oc9Wyuwor8Ze8peEoUoQ==}
+  ua-parser-js@2.0.0-beta.3:
+    resolution: {integrity: sha512-vZkEG/GplLRxj4XVrjLUQpSNg9Qj9RdnIqrOy8dqrLP1e5x7i2N8RfVYlWRbKEZdDSWfeWNcWS38gmieX03/5A==}
+    hasBin: true
 
   ufo@1.5.3:
     resolution: {integrity: sha512-Y7HYmWaFwPUmkoQCUIAYpKqkOf+SbVj/2fJJZ4RJMCfZp0rTGwRbzQD+HghfnhKOjL9E01okqz+ncJskGYfBNw==}
@@ -12671,7 +12669,8 @@ snapshots:
 
   postgres-range@1.1.4: {}
 
-  postgres@3.4.4: {}
+  postgres@3.4.4:
+    optional: true
 
   prelude-ls@1.2.1: {}
 
@@ -13630,7 +13629,7 @@ snapshots:
 
   typescript@5.4.5: {}
 
-  ua-parser-js@1.0.38: {}
+  ua-parser-js@2.0.0-beta.3: {}
 
   ufo@1.5.3: {}
 

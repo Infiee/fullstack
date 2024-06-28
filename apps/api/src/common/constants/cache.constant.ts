@@ -8,12 +8,14 @@ export const ACCESS_TOKEN_KEY = 'system:accessToken';
 export const REFRESH_TOKEN_KEY = 'system:refreshToken';
 
 /** 持久化用户信息 */
+export const PERSIST_ADMIN_USER_KEY = 'admin:user';
+
 export const PERSIST_SYSTEM_USER_KEY = 'system:user';
-export const PERSIST_SYSTEM_USER_PERMISSIONS_KEY = 'system:permissions';
-export const PERSIST_SYSTEM_USER_ROLES_KEY = 'system:rolesKey';
-export const PERSIST_SYSTEM_USER_ROLES_LIST_KEY = 'system:rolesList';
-export const PERSIST_SYSTEM_USER_MENUS_KEY = 'system:menus';
-export const PERSIST_SYSTEM_USER_DEPARTMENTS_KEY = 'system:departments';
+// export const PERSIST_SYSTEM_USER_PERMISSIONS_KEY = 'system:permissions';
+// export const PERSIST_SYSTEM_USER_ROLES_KEY = 'system:rolesKey';
+// export const PERSIST_SYSTEM_USER_ROLES_LIST_KEY = 'system:rolesList';
+// export const PERSIST_SYSTEM_USER_MENUS_KEY = 'system:menus';
+// export const PERSIST_SYSTEM_USER_DEPARTMENTS_KEY = 'system:departments';
 
 /** 重复提交 */
 export const REPEAT_SUBMIT_KEY = 'repeat-submit';

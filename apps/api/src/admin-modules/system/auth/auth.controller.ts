@@ -5,6 +5,7 @@ import { contract } from '@repo/contract';
 import { AuthGuard } from '@/core/guard/auth.guard';
 import { ApiResult } from '@/common/utils/api-result';
 import { FastifyRequest } from 'fastify';
+import { UAParser } from 'ua-parser-js';
 
 @Controller()
 export class AuthController {
@@ -19,9 +20,20 @@ export class AuthController {
   }
 
   @TsRestHandler(contract.systemAuth.login)
-  login() {
+  login(@Request() req: FastifyRequest) {
     return tsRestHandler(contract.systemAuth.login, async ({ body }) => {
-      const data = await this.authService.login(body);
+      const ua = req.headers['user-agent'];
+      const parser = UAParser(ua);
+
+      const clientInfo = {
+        ip: req.realIp,
+        browser: parser.browser.name + ' ' + parser.browser.version,
+        address: '',
+        system: parser.os.name + ' ' + parser.os.version,
+        behavior: '账号登录',
+      };
+
+      const data = await this.authService.login(body, clientInfo);
       return { status: 200, body: ApiResult.ok(data) };
     });
   }

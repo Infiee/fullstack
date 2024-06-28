@@ -80,7 +80,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     response.status(exception.getStatus() || HttpStatus.BAD_REQUEST).send({
       success: false,
-      data: restResponse.data || null,
+      // data: restResponse.data || null,
       code: restResponse?.code || ErrorCode.COMMON,
       message: restResponse.message,
     });
@@ -93,10 +93,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
   ) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<FastifyReply>();
-    response.status(HttpStatus.BAD_REQUEST).send({
+    response.status(HttpStatus.UNAUTHORIZED).send({
       success: false,
-      data: null,
-      code: ErrorCode.LOGIN_EXPIRED,
+      // data: null,
+      code: ErrorCode.COMMON,
       message: 'token已过期,请重新登录' || exception.message,
     });
   }
@@ -108,7 +108,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     response.status(HttpStatus.BAD_REQUEST).send({
       success: false,
-      data: null,
+      // data: null,
       code: exception.code || -1,
       message: exception.message || exception || '捕获异常',
     });

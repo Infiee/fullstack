@@ -63,8 +63,8 @@ const onLogin = async (formEl: FormInstance | undefined) => {
       loading.value = true;
       useUserStoreHook()
         .loginByUsername(ruleForm)
-        .then(res => {
-          if (res.success) {
+        .then((res: any) => {
+          if (res?.success) {
             // 获取后端路由
             return initRouter().then(() => {
               router.push(getTopMenu(true).path).then(() => {
@@ -73,6 +73,7 @@ const onLogin = async (formEl: FormInstance | undefined) => {
             });
           } else {
             message(t("login.pureLoginFail"), { type: "error" });
+            getVerifyCode();
           }
         })
         .finally(() => (loading.value = false));
@@ -160,16 +161,7 @@ onBeforeUnmount(() => {
             size="large"
           >
             <Motion :delay="100">
-              <el-form-item
-                :rules="[
-                  {
-                    required: true,
-                    message: transformI18n($t('login.pureUsernameReg')),
-                    trigger: 'blur'
-                  }
-                ]"
-                prop="username"
-              >
+              <el-form-item prop="username">
                 <el-input
                   v-model="ruleForm.username"
                   clearable
