@@ -15,7 +15,6 @@ import { RedisCacheService } from '@/shared/cache/redis-cache.service';
 import {
   ACCESS_TOKEN_KEY,
   CAPTCHA_IMAGE_KEY,
-  PERSIST_ADMIN_USER_KEY,
   PERSIST_SYSTEM_USER_KEY,
   REFRESH_TOKEN_KEY,
 } from '@/common/constants/cache.constant';
@@ -105,7 +104,7 @@ export class AuthService {
     // await this.redis.persistSet(`${PERSIST_SYSTEM_USER_KEY}:${user.id}`, user);
     // TODO: 单用户多端登录
     await this.redis.persistSet(
-      `${PERSIST_ADMIN_USER_KEY}:${user.id}:${uid}`,
+      `${PERSIST_SYSTEM_USER_KEY}:${user.id}`,
       metaData,
     );
 
@@ -164,12 +163,12 @@ export class AuthService {
     const expires = this.jwtService.decode<JWT.VerifyPayload>(accessToken);
     console.log('decode expires--', expires);
     this.redis.set(
-      `${ACCESS_TOKEN_KEY}:${user.id}`,
+      `${ACCESS_TOKEN_KEY}:${user.id}:${uuid}`,
       accessToken,
       ms(this.config.get('JWT_EXPIRESIN')),
     );
     this.redis.set(
-      `${REFRESH_TOKEN_KEY}:${user.id}`,
+      `${REFRESH_TOKEN_KEY}:${user.id}:${uuid}`,
       refreshToken,
       ms(this.config.get('JWT_REFRESH_EXPIRESIN')),
     );
