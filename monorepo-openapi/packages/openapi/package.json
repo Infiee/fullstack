@@ -1,0 +1,17 @@
+{
+  "name": "@shared/openapi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/schema.d.ts",
+  "scripts": {
+    "gen": "npx openapi-typescript http://127.0.0.1:4523/export/openapi/2?version=3.0 -o ./dist/schema.d.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "openapi-typescript": "^7.0.2",
+    "typescript": "^5.5.3",
+    "@types/bun": "latest"
+  }
+}

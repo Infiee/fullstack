@@ -1,0 +1,14 @@
+{
+  "extends": ["//"],
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^@repo/drizzle#build"],
+      "outputs": ["dist/**"]
+    },
+    "compile:pkg": {
+      "dependsOn": ["^@repo/drizzle#compile:pkg"],
+      "outputs": ["dist/**"]
+    }
+  }
+}

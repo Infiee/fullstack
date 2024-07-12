@@ -1,0 +1,9 @@
+{
+  "reject": [
+    "nanoid",
+    "@types/supertest",
+    "@typescript-eslint/eslint-plugin",
+    "@typescript-eslint/parser",
+    "eslint"
+  ]
+}

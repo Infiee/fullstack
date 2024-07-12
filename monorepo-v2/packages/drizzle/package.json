@@ -1,0 +1,39 @@
+{
+  "name": "@repo/drizzle",
+  "version": "0.0.1",
+  "description": "drizzle orm共享包",
+  "scripts": {
+    "compile:pkg": "tsc",
+    "dev": "tsc --watch",
+    "build": "tsc",
+    "db:migrate:dev": "drizzle-kit migrate dev",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "studio": "drizzle-kit studio --verbose",
+    "seed": "tsx seed/seed.ts"
+  },
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "exports":{
+    ".": "./dist/index.js",
+    "./src": "./src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/node": "^20.14.10",
+    "@types/pg": "^8.11.6",
+    "drizzle-kit": "^0.23.0",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "drizzle-orm": "^0.32.0",
+    "drizzle-zod": "^0.5.1",
+    "pg": "^8.12.0",
+    "zod": "^3.23.8"
+  }
+}

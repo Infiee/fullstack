@@ -1,0 +1,28 @@
+{
+  "name": "@repo/contract",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "compile:pkg": "tsc",
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "********** 注释 ************": "默认导出cjs的模块给nest使用，暴露出来的src提供给vite使用",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./src": "./src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ts-rest/core": "^3.45.2",
+    "zod": "^3.23.8",
+    "@repo/drizzle": "workspace:^"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.3"
+  }
+}
