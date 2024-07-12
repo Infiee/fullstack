@@ -12,23 +12,15 @@ import {
 import { SharedService } from '@/shared/shared.service';
 import { AppConfigService } from '@/config/app-config.service';
 import { RedisCacheService } from '@/shared/cache/redis-cache.service';
-import {
-  ACCESS_TOKEN_KEY,
-  CAPTCHA_IMAGE_KEY,
-  PERSIST_SYSTEM_USER_KEY,
-  REFRESH_TOKEN_KEY,
-} from '@/common/constants/cache.constant';
 import { generateHash, menuToTree } from '@/common/utils';
 import { SelectSystemUserResult, SystemStatusEnum } from '@repo/drizzle';
 import { UserService } from '../user/user.service';
 import { comparePassword } from '@/common/utils/password';
 import { ApiException } from '@/core/filter/api.exception';
-import {
-  ErrorCode,
-  ErrorMessageMap,
-} from '@/common/constants/err-code.constants';
+import { ErrorCode } from '@/common/constants/err-code.constants';
 import { FastifyRequest } from 'fastify';
 import { ADMIN_PERMISSION } from '@/common/constants/admin.constant';
+import { CacheEnum } from '@/common/enum/cache.enum';
 
 @Injectable()
 export class AuthService {
@@ -51,7 +43,7 @@ export class AuthService {
     const uuid = await generateHash();
 
     await this.redis.set(
-      `${CAPTCHA_IMAGE_KEY}:${uuid}`,
+      `${CacheEnum.CAPTCHA_IMAGE_KEY}:${uuid}`,
       captcha.text,
       this.config.get('CAPTCHA_EXPIRESIN'),
     );
@@ -72,12 +64,14 @@ export class AuthService {
 
   /** 校验验证码 */
   async validateCaptcha(uuid: string, code: string) {
-    const text = await this.redis.get<string>(`${CAPTCHA_IMAGE_KEY}:${uuid}`);
+    const text = await this.redis.get<string>(
+      `${CacheEnum.CAPTCHA_IMAGE_KEY}:${uuid}`,
+    );
     if (!text) throw new ApiException(ErrorCode.CAPTCHA_IN_VALID);
     if (code.toLowerCase() !== text.toLowerCase()) {
       throw new ApiException(ErrorCode.CAPTCHA_ERROR);
     }
-    await this.redis.del(`${CAPTCHA_IMAGE_KEY}:${uuid}`);
+    await this.redis.del(`${CacheEnum.CAPTCHA_IMAGE_KEY}:${uuid}`);
   }
 
   /** 登录 */
@@ -101,10 +95,10 @@ export class AuthService {
       ...user,
     };
     // TODO: 单用户单端登录
-    // await this.redis.persistSet(`${PERSIST_SYSTEM_USER_KEY}:${user.id}`, user);
+    // await this.redis.persistSet(`${CacheEnum.PERSIST_SYSTEM_USER_KEY}:${user.id}`, user);
     // TODO: 单用户多端登录
     await this.redis.persistSet(
-      `${PERSIST_SYSTEM_USER_KEY}:${user.id}`,
+      `${CacheEnum.PERSIST_SYSTEM_USER_KEY}:${user.id}`,
       metaData,
     );
 
@@ -132,15 +126,13 @@ export class AuthService {
     });
     // 获取缓存的token
     const cacheRefreshToken = await this.redis.get<string>(
-      `${REFRESH_TOKEN_KEY}:${payload.id}`,
+      `${CacheEnum.REFRESH_TOKEN_KEY}:${payload.id}`,
     );
     if (refreshToken !== cacheRefreshToken) {
-      throw new UnauthorizedException(
-        ErrorMessageMap[ErrorCode['LOGIN_EXPIRED']],
-      );
+      throw new UnauthorizedException('refreshToken已失效,请重新登录');
     }
     const user = await this.redis.get<SelectSystemUserResult>(
-      `${PERSIST_SYSTEM_USER_KEY}:${payload.id}`,
+      `${CacheEnum.PERSIST_SYSTEM_USER_KEY}:${payload.id}`,
     );
     if (!user) throw new ApiException('redis用户不存在');
     const uid = await generateHash();
@@ -163,12 +155,12 @@ export class AuthService {
     const expires = this.jwtService.decode<JWT.VerifyPayload>(accessToken);
     console.log('decode expires--', expires);
     this.redis.set(
-      `${ACCESS_TOKEN_KEY}:${user.id}:${uuid}`,
+      `${CacheEnum.ACCESS_TOKEN_KEY}:${user.id}:${uuid}`,
       accessToken,
       ms(this.config.get('JWT_EXPIRESIN')),
     );
     this.redis.set(
-      `${REFRESH_TOKEN_KEY}:${user.id}:${uuid}`,
+      `${CacheEnum.REFRESH_TOKEN_KEY}:${user.id}:${uuid}`,
       refreshToken,
       ms(this.config.get('JWT_REFRESH_EXPIRESIN')),
     );

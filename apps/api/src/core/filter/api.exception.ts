@@ -1,10 +1,4 @@
 /**
- * @ Author: fei.wong
- * @ Create Time: 2024-03-12 10:27:21
- * @ Description:
- * @ Modified by: fei.wong
- * @ Modified time: 2024-06-28 10:15:52
- *
  * 用法：
  * throw new ApiException(ErrorCode.CAPTCHA_IN_VALID);
  * throw new ApiException("自定义消息");
@@ -52,10 +46,20 @@ export class ApiException extends HttpException {
     super(result, statusCode || HttpStatus.OK);
   }
 
-  public forbidden() {
+  static forbidden() {
     throw new ApiException({
       message: ErrorMessageMap[ErrorCode.FORBIDDEN],
       code: ErrorCode.FORBIDDEN,
     });
+  }
+
+  static unauthorized() {
+    throw new ApiException(
+      {
+        message: ErrorMessageMap[ErrorCode['LOGIN_EXPIRED']],
+        code: ErrorCode.LOGIN_EXPIRED,
+      },
+      HttpStatus.UNAUTHORIZED,
+    );
   }
 }
