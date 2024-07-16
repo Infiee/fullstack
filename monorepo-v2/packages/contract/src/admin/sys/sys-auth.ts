@@ -1,53 +1,32 @@
 import { initContract } from "@ts-rest/core";
-import { ZodTypeAny, z } from "zod";
-import { apiResultSchema, RouterMetadata } from "../common/common";
+import { z } from "zod";
+import { selectSysUserSchema } from "@repo/drizzle";
+import { RouterMetadata, apiResultSchema } from "../../common/common";
 
 const c = initContract();
-
 const metadata = {
   openApiTags: ["系统-认证"],
 } as RouterMetadata;
 
-export const selectSystemUserSchema = z.object({ password: z.string() });
-
-/** 登录schema */
-export const SystemLoginSchema = z.object({
+const sysLoginSchema = z.object({
   uuid: z.string(),
   code: z.string(),
   username: z.string(),
   password: z.string(),
 });
-export type SystemLoginDto = z.infer<typeof SystemLoginSchema>;
+export type SysLoginDto = z.infer<typeof sysLoginSchema>;
 
-/** 登录结果schema */
-export const SystemGetInfoSchema = z.object({
-  user: selectSystemUserSchema.omit({ password: true }),
+const sysGetInfoSchema = z.object({
+  user: selectSysUserSchema.omit({ password: true }),
   roles: z.array(z.string()),
   permissions: z.array(z.string()),
 });
-export type SystemGetInfo = z.infer<typeof SystemGetInfoSchema>;
+export type SysGetInfo = z.infer<typeof sysGetInfoSchema>;
 
-/** 登录结果schema */
-export const SystemLoginResultSchema = z
-  .object({
-    roles: z.string().array(),
-    accessToken: z.string(),
-    refreshToken: z.string(),
-    expires: z.number(),
-  })
-  .merge(
-    selectSystemUserSchema.pick({
-      // avatar: true,
-      // nickname: true,
-      // username: true,
-    })
-  );
-
-/** 系统登录合约 */
 export const sysAuth = c.router(
   {
     // 获取登录验证码
-    getCaptcha: {
+    getCaptchaImage: {
       method: "GET",
       path: "/captcha",
       responses: {
@@ -66,9 +45,25 @@ export const sysAuth = c.router(
     login: {
       method: "POST",
       path: "/login",
-      body: SystemLoginSchema,
+      body: sysLoginSchema,
       responses: {
-        200: apiResultSchema(SystemLoginResultSchema),
+        200: apiResultSchema(
+          z
+            .object({
+              roles: z.string().array(),
+              accessToken: z.string(),
+              refreshToken: z.string(),
+              expires: z.number(),
+            })
+            .merge(
+              selectSysUserSchema.pick({
+                avatar: true,
+                nickname: true,
+                username: true,
+              })
+            )
+        ),
+        // 200: c.type<SysLoginResult>(),
       },
       metadata,
       summary: "登录",
@@ -76,9 +71,9 @@ export const sysAuth = c.router(
     // 获取登录信息
     getInfo: {
       method: "GET",
-      path: "/getInfo",
+      path: "/info",
       responses: {
-        200: apiResultSchema(SystemGetInfoSchema),
+        200: apiResultSchema(sysGetInfoSchema),
       },
       metadata,
       summary: "获取登录信息(用户、角色、权限)",
@@ -86,9 +81,10 @@ export const sysAuth = c.router(
     // 获取登录用户路由信息
     getRouters: {
       method: "GET",
-      path: "/getRouters",
+      path: "/routes",
       responses: {
-        200: apiResultSchema(z.any()),
+        // 200: apiResultSchema(z.array(SysRouteSchema)),
+        200: apiResultSchema(z.array(z.any())),
       },
       metadata,
       summary: "获取登录用户路由信息",
@@ -112,6 +108,6 @@ export const sysAuth = c.router(
     },
   },
   {
-    pathPrefix: "/system/auth",
+    pathPrefix: "/sys",
   }
 );

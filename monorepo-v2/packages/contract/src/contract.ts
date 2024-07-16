@@ -1,11 +1,11 @@
 import { initContract } from "@ts-rest/core";
-import { sysAuth } from "./sys";
+import { sysModule } from "./admin/sys";
 
 const c = initContract();
 
 export const contract = c.router(
   {
-    sysAuth,
+    ...sysModule,
   },
   {
     pathPrefix: "/api",

@@ -1,0 +1,10 @@
+{
+  "extends": ["//"],
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^@repo/contract#build","^@repo/drizzle#build"],
+      "outputs": ["dist/**"]
+    }
+  }
+}

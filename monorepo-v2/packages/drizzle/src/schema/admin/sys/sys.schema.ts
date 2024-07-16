@@ -11,7 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 import "zod";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { baseStatusColumns, baseDateColumns } from "../base.schema";
+import { baseStatusColumns, baseDateColumns } from "../../base.schema";
 
 // const genderEnum = pgEnum('gender', SysGenderEnum);
 

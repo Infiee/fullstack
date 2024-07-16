@@ -1,3 +1,3 @@
 export * from "./base.schema";
-export * from "./sys/sys.schema";
-export * from "./sys/sys-relation.schema";
+export * from "./admin/sys/sys.schema";
+export * from "./admin/sys/sys-relation.schema";
