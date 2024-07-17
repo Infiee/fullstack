@@ -1,12 +1,12 @@
 import { eq, inArray, sql } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 
-import * as schema from "../src/schema";
+import * as schema from "../src/schema/schema";
 import { Dept, Menu, deptData, menuData, roleData, userData } from "./mock/sys";
 import { getDb } from "./db";
 import { hashPassword } from "./utils";
 
-type DB = NodePgDatabase<typeof schema>;
+type CLIENT = NodePgDatabase<typeof schema>;
 
 (async () => {
   const { db, client } = await getDb();
@@ -23,12 +23,12 @@ type DB = NodePgDatabase<typeof schema>;
       // await db.execute(sql`DROP TABLE IF EXISTS SystemMenu,SystemUser;`);
 
       await db.transaction(async (tx) => {
-        await createMenu(tx);
+        // await createMenu(tx);
         await createUser(tx);
-        await createRole(tx);
-        await createUserRole(tx);
-        await createRoleMenu(tx);
-        await createDept(tx);
+        // await createRole(tx);
+        // await createUserRole(tx);
+        // await createRoleMenu(tx);
+        // await createDept(tx);
       });
 
       await client.end();
@@ -41,7 +41,7 @@ type DB = NodePgDatabase<typeof schema>;
 })();
 
 // 用户
-async function createUser(db: DB) {
+async function createUser(db: CLIENT) {
   const data = await Promise.all(
     userData.map(async (user) => {
       user.password = await hashPassword(user.password);
@@ -53,13 +53,13 @@ async function createUser(db: DB) {
 }
 
 // 角色
-async function createRole(db: DB) {
+async function createRole(db: CLIENT) {
   await db.insert(schema.sysRole).values(roleData).returning();
   console.log("角色数据：创建成功");
 }
 
 // 菜单
-async function createMenu(db: DB) {
+async function createMenu(db: CLIENT) {
   const mapItem = async (item: Menu, parentId?: number) => {
     const { children, ...params } = item;
     const itemData = await db
@@ -83,7 +83,7 @@ async function createMenu(db: DB) {
 }
 
 // 用户 -> 角色
-async function createUserRole(db: DB) {
+async function createUserRole(db: CLIENT) {
   const relations = [
     {
       userId: 1,
@@ -120,7 +120,7 @@ async function createRoleMenu(db: NodePgDatabase<typeof schema>) {
 }
 
 // 部门
-async function createDept(db: DB) {
+async function createDept(db: CLIENT) {
   const mapItem = async (item: Dept, parentId?: number) => {
     const { children, ...params } = item;
     const itemData = await db

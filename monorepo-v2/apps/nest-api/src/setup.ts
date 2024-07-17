@@ -2,9 +2,14 @@ import { INestApplication } from '@nestjs/common';
 import { SwaggerModule } from '@nestjs/swagger';
 import { generateOpenApi } from '@ts-rest/open-api';
 import { RouterMetadata, contract } from '@repo/contract';
+import { z } from 'zod';
+import { zodErrorMap } from '@/common/utils/zod-error-map';
 // import { AppConfigService } from './config/app-config.service';
 
 export async function setupApp(app: INestApplication) {
+  /** 重置设置zod错误映射 */
+  z.setErrorMap(zodErrorMap);
+
   // const config = app.get(AppConfigService)
   // config.get('SWAGGER_ENABLE')
 

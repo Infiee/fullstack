@@ -1,10 +1,12 @@
 import { Global, Module } from '@nestjs/common';
-import { drizzle } from 'drizzle-orm/node-postgres';
+import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import * as schema from '@repo/drizzle';
+import { schemas } from '@repo/drizzle';
 import { AppConfigService } from '@/config/app-config.service';
 
-export const PG_CONNECTION = 'PG_CONNECTION';
+export const DB_CLIENT = Symbol('DB_CLIENT');
+export type DrizzleDB = NodePgDatabase<typeof schemas>;
+export { schemas };
 
 @Global()
 @Module({
@@ -12,19 +14,14 @@ export const PG_CONNECTION = 'PG_CONNECTION';
   providers: [
     {
       inject: [AppConfigService],
-      provide: PG_CONNECTION,
-      // inject: [],
+      provide: DB_CLIENT,
       useFactory: async (config: AppConfigService) => {
         const connectionString = config.get('DB_PG_URL');
-
-        // const pool = postgres(connectionString);
-        // return drizzle(pool, { schema: schema, logger: true });
-
         const pool = new Pool({ connectionString });
-        return drizzle(pool, { schema: schema, logger: true });
+        return drizzle(pool, { schema: schemas, logger: true });
       },
     },
   ],
-  exports: [PG_CONNECTION],
+  exports: [DB_CLIENT],
 })
 export class DrizzleModule {}

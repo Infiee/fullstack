@@ -3,7 +3,6 @@ import { UserService } from './user.service';
 import { TsRestHandler, tsRestHandler } from '@ts-rest/nest';
 import { contract } from '@repo/contract';
 import { AuthGuard } from '@/core/guard/auth.guard';
-import '@ts-rest/core';
 import { ApiResult } from '@/common/utils/api-result';
 
 @UseGuards(AuthGuard)

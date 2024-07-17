@@ -27,10 +27,10 @@
     "@types/pg": "^8.11.6",
     "drizzle-kit": "^0.23.0",
     "tsx": "^4.16.2",
-    "typescript": "^5.5.3"
+    "typescript": "^5.4.5"
   },
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "@node-rs/bcrypt": "^1.10.4",
     "drizzle-orm": "^0.32.0",
     "drizzle-zod": "^0.5.1",
     "pg": "^8.12.0",

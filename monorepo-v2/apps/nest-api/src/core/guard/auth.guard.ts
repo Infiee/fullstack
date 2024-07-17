@@ -21,7 +21,7 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<FastifyRequest>();
     const token = this.sharedService.extractTokenFromHeader(request);
-    if (!token) throw new ForbiddenException('未发现accessToken,请重新登录');
+    if (!token) throw new ForbiddenException('未获取到accessToken,请先登录');
 
     const payload = await this.sharedService.validateToken(token);
     // TODO: 认证通过后挂载全局user对象到request

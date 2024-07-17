@@ -23,7 +23,7 @@ export const sysUser = c.router(
     create: {
       method: "POST",
       path: `/${basePath}`,
-      body: insertSysUserSchema,
+      body: insertSysUserSchema.omit({ id: true }),
       responses: {
         201: apiResultSchema(selectSysUserSchema.omit({ password: true })),
       },

@@ -5,12 +5,13 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "compile:pkg": "turbo compile:pkg",
-    "clean": "rm -rf ./node_modules && rm -rf ./**/*/node_modules && rm -rf ./**/*/.turbo && rm -rf ./**/*/dist"
+    "clean": "rm -rf ./.turbo && rm -rf ./node_modules && rm -rf ./**/*/node_modules && rm -rf ./**/*/.turbo && rm -rf ./**/*/dist",
+    "clean:dist": "rm -rf ./**/*/.turbo && rm -rf ./**/*/dist"
   },
   "devDependencies": {
     "prettier": "^3.3.2",
     "turbo": "^2.0.6",
-    "typescript": "^5.5.3"
+    "typescript": "^5.4.5"
   },
   "packageManager": "pnpm@9.5.0",
   "engines": {

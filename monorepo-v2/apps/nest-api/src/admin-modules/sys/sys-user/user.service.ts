@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ServerInferRequest } from '@ts-rest/core';
 import { isNumber } from 'radash';
 import {
@@ -11,18 +11,14 @@ import {
   ilike,
   inArray,
 } from 'drizzle-orm';
-import { DrizzleService, schemas } from '@/shared/drizzle/drizzle.service';
-import {
-  InsertSysUser,
-  SelectSysUser,
-  SelectSysUserResult,
-} from '@repo/drizzle';
+import { InsertSysUser, SelectSysUser } from '@repo/drizzle';
 import { contract } from '@repo/contract';
 import { hashPassword } from '@/common/utils/password';
+import { DrizzleDB, DB_CLIENT, schemas } from '@/shared/drizzle/drizzle.module';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly drizzle: DrizzleService) {}
+  constructor(@Inject(DB_CLIENT) private readonly db: DrizzleDB) {}
 
   protected get schema() {
     return schemas.sysUser;
@@ -36,10 +32,6 @@ export class UserService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...fields } = getTableColumns(this.schema);
     return fields;
-  }
-
-  protected get db() {
-    return this.drizzle.db;
   }
 
   async create(dto: InsertSysUser) {
@@ -118,7 +110,7 @@ export class UserService {
       .where(eq(this.schema[key], value));
   }
 
-  async update(id: number, dto: Partial<SelectSysUserResult>) {
+  async update(id: number, dto: Partial<Omit<SelectSysUser, 'password'>>) {
     return await this.db
       .update(this.schema)
       .set(dto)

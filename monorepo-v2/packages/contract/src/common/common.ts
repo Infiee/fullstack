@@ -49,8 +49,8 @@ export const basePaginationAndSortSchema =
 
 /** 日期 */
 export const baseSchema = z.object({
-  createTime: z.date().optional(),
-  updateTime: z.date().optional(),
+  createTime: z.string().datetime().optional(),
+  updateTime: z.string().datetime().optional(),
   // TODO: number时间戳格式
   // createTime: z.number().optional(),
   // updateTime: z.number().optional(),
