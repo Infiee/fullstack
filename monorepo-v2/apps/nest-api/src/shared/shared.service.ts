@@ -3,7 +3,7 @@ import { UAParser } from 'ua-parser-js';
 import svgCaptcha from 'svg-captcha';
 import { FastifyRequest } from 'fastify';
 import { JwtService, JwtVerifyOptions } from '@nestjs/jwt';
-import ms, { StringValue } from 'ms';
+import ms from 'ms';
 import { AppConfigService } from '@/config/app-config.service';
 import { RedisCacheService } from '@/shared/cache/redis-cache.service';
 import { SYS_USER_ACCESS_TOKEN_KEY } from '@/common/constants/admin-cache.constant';
@@ -78,7 +78,7 @@ export class SharedService {
       await this.redis.set(
         `${SYS_USER_ACCESS_TOKEN_KEY}:${payload.id}`,
         token,
-        ms(this.config.get('JWT_EXPIRESIN') as StringValue),
+        ms(this.config.get('JWT_EXPIRESIN')),
       );
     }
   }

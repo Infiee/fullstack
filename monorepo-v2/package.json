@@ -4,6 +4,7 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
+    "dev:app": "pnpm compile:pkg && turbo dev",
     "compile:pkg": "turbo compile:pkg",
     "clean": "rm -rf ./.turbo && rm -rf ./node_modules && rm -rf ./**/*/node_modules && rm -rf ./**/*/.turbo && rm -rf ./**/*/dist",
     "clean:dist": "rm -rf ./**/*/.turbo && rm -rf ./**/*/dist"

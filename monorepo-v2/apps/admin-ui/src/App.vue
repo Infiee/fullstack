@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import HelloWorld from "./components/HelloWorld.vue";
-import { contract } from "@repo/contract/src";
+// import { contract } from "@repo/contract/src";
 
-console.log(contract);
+// console.log(contract);
 </script>
 
 <template>
