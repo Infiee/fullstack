@@ -1,6 +1,6 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import { insertSysUserSchema, selectSysUserSchema } from "@repo/drizzle";
+import { insertSysUserSchema, selectSysUserSchema } from "../../drizzle";
 import {
   apiResultSchema,
   basePaginationAndSortSchema,

@@ -2,7 +2,7 @@ import type { Config } from 'drizzle-kit';
 import { DB_PG_URL } from './seed/db';
 
 export default {
-  schema: './src/schema/**/*.schema.ts',
+  schema: './src/drizzle/schema/**/*.schema.ts',
   out: './migration',
   dialect: 'postgresql',
   dbCredentials: {

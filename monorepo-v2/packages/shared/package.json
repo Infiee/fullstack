@@ -1,7 +1,7 @@
 {
-  "name": "@repo/drizzle",
-  "version": "0.0.1",
-  "description": "drizzle orm共享包",
+  "name": "@repo/shared",
+  "version": "1.0.0",
+  "description": "",
   "scripts": {
     "compile:pkg": "tsc",
     "dev": "tsc --watch",
@@ -12,28 +12,29 @@
     "studio": "drizzle-kit studio --verbose",
     "seed": "tsx seed/seed.ts"
   },
+  "********** 注释 ************": "默认导出cjs的模块给nest使用，暴露出来的src提供给vite使用",
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
-  "exports":{
+  "exports": {
     ".": "./dist/index.js",
-    "./src": "./src/index.ts"
+    "./src": "./src/index.ts",
+    "./src/contract": "./src/contract.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
-    "@types/node": "^20.14.10",
-    "@types/pg": "^8.11.6",
-    "drizzle-kit": "^0.23.0",
-    "tsx": "^4.16.2",
-    "typescript": "^5.4.5"
-  },
   "dependencies": {
+    "@ts-rest/core": "^3.45.2",
     "@node-rs/bcrypt": "^1.10.4",
     "drizzle-orm": "^0.31.2",
     "drizzle-zod": "^0.5.1",
     "pg": "^8.12.0",
     "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "@types/pg": "^8.11.6",
+    "drizzle-kit": "^0.22.7",
+    "tsx": "^4.16.2"
   }
 }

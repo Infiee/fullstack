@@ -11,8 +11,7 @@ import {
   ilike,
   inArray,
 } from 'drizzle-orm';
-import { InsertSysUser, SelectSysUser } from '@repo/drizzle';
-import { contract } from '@repo/contract';
+import { contract, InsertSysUser, SelectSysUser } from '@repo/shared';
 import { hashPassword } from '@/common/utils/password';
 import { DrizzleDB, DB_CLIENT, schemas } from '@/shared/drizzle/drizzle.module';
 

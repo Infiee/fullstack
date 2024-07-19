@@ -12,8 +12,8 @@ export const sysModule = {
   sysDept,
 }
 
-export * from './sys-auth'
-export * from './sys-user'
-export * from './sys-role'
-export * from './sys-menu'
-export * from './sys-dept'
+// export * from './sys-auth'
+// export * from './sys-user'
+// export * from './sys-role'
+// export * from './sys-menu'
+// export * from './sys-dept'

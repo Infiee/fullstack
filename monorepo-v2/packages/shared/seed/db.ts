@@ -1,6 +1,6 @@
 import pg from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
-import * as schema from "../src/schema/schema";
+import * as schema from "../src/drizzle/schema/schema";
 
 export const DB_PG_URL = "postgresql://postgres:root@localhost:5432/nest-admin";
 

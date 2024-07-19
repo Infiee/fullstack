@@ -1,6 +1,6 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import { insertSysDeptSchema, selectSysDeptSchema } from "@repo/drizzle";
+import { insertSysDeptSchema, selectSysDeptSchema } from "../../drizzle";
 import {
   apiResultSchema,
   baseStatusSchema,

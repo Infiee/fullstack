@@ -1,6 +1,6 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import { selectSysUserSchema } from "@repo/drizzle";
+import { selectSysUserSchema } from "../../drizzle";
 import { RouterMetadata, apiResultSchema } from "../../common/common";
 
 const c = initContract();

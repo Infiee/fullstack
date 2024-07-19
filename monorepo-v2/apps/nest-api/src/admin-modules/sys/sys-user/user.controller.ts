@@ -1,7 +1,7 @@
 import { Controller, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { TsRestHandler, tsRestHandler } from '@ts-rest/nest';
-import { contract } from '@repo/contract';
+import { contract } from '@repo/shared';
 import { AuthGuard } from '@/core/guard/auth.guard';
 import { ApiResult } from '@/common/utils/api-result';
 

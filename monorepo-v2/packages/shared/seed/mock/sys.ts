@@ -3,7 +3,7 @@ import {
   InsertSysMenu,
   InsertSysRole,
   InsertSysUser,
-} from "../../src";
+} from "../../src/drizzle";
 
 /** 用户 */
 export const userData: InsertSysUser[] = [

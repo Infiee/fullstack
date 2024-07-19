@@ -4,7 +4,7 @@ import {
   insertSysRoleSchema,
   selectSysMenuSchema,
   selectSysRoleSchema,
-} from "@repo/drizzle";
+} from "../../drizzle";
 import {
   baseStatusSchema,
   RouterMetadata,

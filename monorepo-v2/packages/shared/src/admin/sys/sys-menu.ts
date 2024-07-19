@@ -1,6 +1,6 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import { insertSysMenuSchema, selectSysMenuSchema } from "@repo/drizzle";
+import { insertSysMenuSchema, selectSysMenuSchema } from "../../drizzle";
 import {
   RouterMetadata,
   apiResultSchema,

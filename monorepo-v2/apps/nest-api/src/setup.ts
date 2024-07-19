@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { SwaggerModule } from '@nestjs/swagger';
 import { generateOpenApi } from '@ts-rest/open-api';
-import { RouterMetadata, contract } from '@repo/contract';
+import { RouterMetadata, contract } from '@repo/shared';
 import { z } from 'zod';
 import { zodErrorMap } from '@/common/utils/zod-error-map';
 // import { AppConfigService } from './config/app-config.service';

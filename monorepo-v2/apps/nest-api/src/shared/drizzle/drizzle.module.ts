@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import { schemas } from '@repo/drizzle';
+import { schemas } from '@repo/shared';
 import { AppConfigService } from '@/config/app-config.service';
 
 export const DB_CLIENT = Symbol('DB_CLIENT');
