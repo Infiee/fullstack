@@ -2,7 +2,7 @@ import { eq, inArray, sql } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 
 import * as schema from "../src/drizzle/schema/schema";
-import { Dept, Menu, deptData, menuData, roleData, userData } from "./mock/sys";
+import { Dept, Menu, deptData, menuData, roleData, userData } from "./mock/system";
 import { getDb } from "./db";
 import { hashPassword } from "./utils";
 
@@ -23,12 +23,12 @@ type CLIENT = NodePgDatabase<typeof schema>;
       // await db.execute(sql`DROP TABLE IF EXISTS SystemMenu,SystemUser;`);
 
       await db.transaction(async (tx) => {
-        // await createMenu(tx);
+        await createMenu(tx);
         await createUser(tx);
-        // await createRole(tx);
-        // await createUserRole(tx);
-        // await createRoleMenu(tx);
-        // await createDept(tx);
+        await createRole(tx);
+        await createUserRole(tx);
+        await createRoleMenu(tx);
+        await createDept(tx);
       });
 
       await client.end();
@@ -48,13 +48,13 @@ async function createUser(db: CLIENT) {
       return user;
     })
   );
-  await db.insert(schema.sysUser).values(data).returning();
+  await db.insert(schema.systemUser).values(data).returning();
   console.log("用户数据：创建成功");
 }
 
 // 角色
 async function createRole(db: CLIENT) {
-  await db.insert(schema.sysRole).values(roleData).returning();
+  await db.insert(schema.systemRole).values(roleData).returning();
   console.log("角色数据：创建成功");
 }
 
@@ -63,7 +63,7 @@ async function createMenu(db: CLIENT) {
   const mapItem = async (item: Menu, parentId?: number) => {
     const { children, ...params } = item;
     const itemData = await db
-      .insert(schema.sysMenu)
+      .insert(schema.systemMenu)
       .values({
         ...params,
         // parentId: parentId ?? 0,
@@ -94,14 +94,14 @@ async function createUserRole(db: CLIENT) {
       roleId: 3,
     },
   ];
-  await db.delete(schema.sysUserToRole).where(
+  await db.delete(schema.systemUserToRole).where(
     inArray(
-      schema.sysUserToRole.userId,
+      schema.systemUserToRole.userId,
       relations.map((r) => r.userId)
     )
   );
   if (relations.length > 0) {
-    await db.insert(schema.sysUserToRole).values(relations).returning();
+    await db.insert(schema.systemUserToRole).values(relations).returning();
   }
   console.log("用户->角色数据：创建成功");
 }
@@ -113,9 +113,9 @@ async function createRoleMenu(db: NodePgDatabase<typeof schema>) {
   const roleIds = [3];
   const relations = menuIds.map((menuId) => ({ menuId, roleId: roleIds[0] }));
   await db
-    .delete(schema.sysMenuToRole)
-    .where(inArray(schema.sysMenuToRole.roleId, roleIds));
-  await db.insert(schema.sysMenuToRole).values(relations).returning();
+    .delete(schema.systemMenuToRole)
+    .where(inArray(schema.systemMenuToRole.roleId, roleIds));
+  await db.insert(schema.systemMenuToRole).values(relations).returning();
   console.log("角色->菜单数据：创建成功");
 }
 
@@ -124,7 +124,7 @@ async function createDept(db: CLIENT) {
   const mapItem = async (item: Dept, parentId?: number) => {
     const { children, ...params } = item;
     const itemData = await db
-      .insert(schema.sysDept)
+      .insert(schema.systemDept)
       .values({
         ...params,
         ...(parentId ? { parentId } : {}),

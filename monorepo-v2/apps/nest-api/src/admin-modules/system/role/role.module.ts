@@ -8,4 +8,4 @@ import { SystemUserModule } from '../user/user.module';
   controllers: [SystemRoleController],
   providers: [SystemRoleService],
 })
-export class RoleModule {}
+export class SystemRoleModule {}

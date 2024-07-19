@@ -1,12 +1,12 @@
 import {
-  InsertSysDept,
-  InsertSysMenu,
-  InsertSysRole,
-  InsertSysUser,
+  InsertSystemDept,
+  InsertSystemMenu,
+  InsertSystemRole,
+  InsertSystemUser,
 } from "../../src/drizzle";
 
 /** 用户 */
-export const userData: InsertSysUser[] = [
+export const userData: InsertSystemUser[] = [
   {
     username: "admin",
     password: "admin123",
@@ -60,7 +60,7 @@ export const userData: InsertSysUser[] = [
 ];
 
 /** 角色 */
-export const roleData: InsertSysRole[] = [
+export const roleData: InsertSystemRole[] = [
   {
     name: "超级管理员",
     code: "admin",
@@ -82,7 +82,7 @@ export const roleData: InsertSysRole[] = [
 ];
 
 /** 菜单 */
-export type Menu = InsertSysMenu & { children?: Menu[] };
+export type Menu = InsertSystemMenu & { children?: Menu[] };
 export const menuData: Menu[] = [
   {
     title: "系统管理",
@@ -379,7 +379,7 @@ export const menuData: Menu[] = [
 ];
 
 /** 部门 */
-export type Dept = InsertSysDept & { children?: Dept[] };
+export type Dept = InsertSystemDept & { children?: Dept[] };
 export const deptData: Dept[] = [
   {
     name: "小王科技",

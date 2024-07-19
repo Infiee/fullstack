@@ -8,4 +8,4 @@ import { SystemUserModule } from '../user/user.module';
   controllers: [SystemDeptController],
   providers: [SystemDeptService],
 })
-export class DeptModule {}
+export class SystemDeptModule {}
