@@ -11,7 +11,7 @@ import {
   TsRestException,
 } from '@ts-rest/nest';
 import { FastifyReply } from 'fastify';
-import { ApiErrorResult } from './api.exception';
+import { ApiErrorResult } from './api-exception';
 import { TokenExpiredError } from '@nestjs/jwt';
 
 @Catch()

@@ -1,29 +1,31 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import { selectSysUserSchema } from "../../drizzle";
+import { selectSystemUserSchema } from "../../../drizzle";
 import { RouterMetadata, apiResultSchema } from "../../common/common";
+import { SystemRouteSchema } from "../../common/route-schema";
 
 const c = initContract();
 const metadata = {
   openApiTags: ["系统-认证"],
 } as RouterMetadata;
 
-const sysLoginSchema = z.object({
+const systemLoginSchema = z.object({
   uuid: z.string(),
   code: z.string(),
   username: z.string(),
   password: z.string(),
 });
-export type SysLoginDto = z.infer<typeof sysLoginSchema>;
+export type SystemLoginDto = z.infer<typeof systemLoginSchema>;
 
-const sysGetInfoSchema = z.object({
-  user: selectSysUserSchema.omit({ password: true }),
+const systemGetInfoSchema = z.object({
+  user: selectSystemUserSchema.omit({ password: true }),
   roles: z.array(z.string()),
   permissions: z.array(z.string()),
 });
-export type SysGetInfo = z.infer<typeof sysGetInfoSchema>;
+export type SystemGetInfo = z.infer<typeof systemGetInfoSchema>;
+export type SystemRouterItem = z.infer<typeof SystemRouteSchema>;
 
-export const sysAuth = c.router(
+export const systemAuth = c.router(
   {
     // 获取登录验证码
     getCaptchaImage: {
@@ -45,7 +47,7 @@ export const sysAuth = c.router(
     login: {
       method: "POST",
       path: "/login",
-      body: sysLoginSchema,
+      body: systemLoginSchema,
       responses: {
         200: apiResultSchema(
           z
@@ -56,14 +58,14 @@ export const sysAuth = c.router(
               expires: z.number(),
             })
             .merge(
-              selectSysUserSchema.pick({
+              selectSystemUserSchema.pick({
                 avatar: true,
                 nickname: true,
                 username: true,
               })
             )
         ),
-        // 200: c.type<SysLoginResult>(),
+        // 200: c.type<SystemLoginResult>(),
       },
       metadata,
       summary: "登录",
@@ -73,7 +75,7 @@ export const sysAuth = c.router(
       method: "GET",
       path: "/info",
       responses: {
-        200: apiResultSchema(sysGetInfoSchema),
+        200: apiResultSchema(systemGetInfoSchema),
       },
       metadata,
       summary: "获取登录信息(用户、角色、权限)",
@@ -83,8 +85,7 @@ export const sysAuth = c.router(
       method: "GET",
       path: "/routes",
       responses: {
-        // 200: apiResultSchema(z.array(SysRouteSchema)),
-        200: apiResultSchema(z.array(z.any())),
+        200: apiResultSchema(z.array(SystemRouteSchema)),
       },
       metadata,
       summary: "获取登录用户路由信息",
@@ -108,6 +109,6 @@ export const sysAuth = c.router(
     },
   },
   {
-    pathPrefix: "/sys",
+    pathPrefix: "/system",
   }
 );

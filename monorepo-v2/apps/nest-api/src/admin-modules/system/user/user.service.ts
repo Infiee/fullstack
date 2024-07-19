@@ -11,20 +11,16 @@ import {
   ilike,
   inArray,
 } from 'drizzle-orm';
-import { contract, InsertSysUser, SelectSysUser } from '@repo/shared';
 import { hashPassword } from '@/common/utils/password';
 import { DrizzleDB, DB_CLIENT, schemas } from '@/shared/drizzle/drizzle.module';
+import { contract, InsertSystemUser, SelectSystemUser } from '@repo/shared';
 
 @Injectable()
-export class UserService {
+export class SystemUserService {
   constructor(@Inject(DB_CLIENT) private readonly db: DrizzleDB) {}
 
   protected get schema() {
-    return schemas.sysUser;
-  }
-
-  protected get query() {
-    return this.db.query.sysUser;
+    return schemas.systemUser;
   }
 
   protected get columnFields() {
@@ -33,13 +29,15 @@ export class UserService {
     return fields;
   }
 
-  async create(dto: InsertSysUser) {
+  async create(dto: InsertSystemUser) {
     dto.password = await hashPassword(dto.password);
     return this.db.insert(this.schema).values(dto).returning(this.columnFields);
   }
 
   async filterAll(
-    queryParams: ServerInferRequest<typeof contract.sysUser.filterAll>['query'],
+    queryParams: ServerInferRequest<
+      typeof contract.systemUser.filterAll
+    >['query'],
   ) {
     const query = {
       pageNum: 1,
@@ -65,7 +63,7 @@ export class UserService {
       }
     };
     const [users, total] = await Promise.all([
-      this.query.findMany({
+      this.db.query.systemUser.findMany({
         columns: { password: false },
         where: whereOptions,
         with: {
@@ -100,16 +98,16 @@ export class UserService {
   }
 
   async findOne(
-    key: keyof Omit<SelectSysUser, 'password'>,
+    key: keyof Omit<SelectSystemUser, 'password'>,
     value: string | number,
-  ): Promise<SelectSysUser[]> {
+  ): Promise<SelectSystemUser[]> {
     return this.db
       .select()
       .from(this.schema)
       .where(eq(this.schema[key], value));
   }
 
-  async update(id: number, dto: Partial<Omit<SelectSysUser, 'password'>>) {
+  async update(id: number, dto: Partial<Omit<SelectSystemUser, 'password'>>) {
     return await this.db
       .update(this.schema)
       .set(dto)
@@ -128,16 +126,16 @@ export class UserService {
     const relations = roleIds.map((roleId) => ({ roleId, userId }));
     await this.db.transaction(async (tx) => {
       await tx
-        .delete(schemas.sysUserToRole)
-        .where(eq(schemas.sysUserToRole.userId, userId));
+        .delete(schemas.systemUserToRole)
+        .where(eq(schemas.systemUserToRole.userId, userId));
 
       if (relations.length > 0) {
-        await tx.insert(schemas.sysUserToRole).values(relations).returning();
+        await tx.insert(schemas.systemUserToRole).values(relations).returning();
       }
     });
   }
 
-  async resetPassword(id: number, dto: Pick<InsertSysUser, 'password'>) {
+  async resetPassword(id: number, dto: Pick<InsertSystemUser, 'password'>) {
     dto.password = await hashPassword(dto.password);
     return await this.db
       .update(this.schema)
@@ -147,25 +145,25 @@ export class UserService {
   }
 
   async getRoleIds(userId: number) {
-    const relations = await this.db.query.sysUserToRole.findMany({
-      where: eq(schemas.sysUserToRole.userId, userId),
+    const relations = await this.db.query.systemUserToRole.findMany({
+      where: eq(schemas.systemUserToRole.userId, userId),
     });
     return relations.map((i) => i.roleId);
   }
 
   async getRoles(userId: number) {
-    const relations = await this.db.query.sysUserToRole.findMany({
-      where: eq(schemas.sysUserToRole.userId, userId),
+    const relations = await this.db.query.systemUserToRole.findMany({
+      where: eq(schemas.systemUserToRole.userId, userId),
       columns: {},
       with: {
-        sysRole: {
+        systemRole: {
           columns: {
             code: true,
           },
         },
       },
     });
-    return relations.map((i) => i.sysRole.code);
+    return relations.map((i) => i.systemRole.code);
   }
 
   batchRemove(ids: number[]) {

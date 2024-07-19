@@ -1,6 +1,9 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import { insertSysUserSchema, selectSysUserSchema } from "../../drizzle";
+import {
+  insertSystemUserSchema,
+  selectSystemUserSchema,
+} from "../../../drizzle";
 import {
   apiResultSchema,
   basePaginationAndSortSchema,
@@ -17,15 +20,18 @@ const metadata = {
 const basePath = "users";
 const baseSummary = "系统用户";
 
-export const sysUser = c.router(
+const systemUserSchema = selectSystemUserSchema.omit({ password: true });
+export type SelectSystemUserResult = z.infer<typeof systemUserSchema>;
+
+export const systemUser = c.router(
   {
     // 创建用户
     create: {
       method: "POST",
       path: `/${basePath}`,
-      body: insertSysUserSchema.omit({ id: true }),
+      body: insertSystemUserSchema.omit({ id: true }),
       responses: {
-        201: apiResultSchema(selectSysUserSchema.omit({ password: true })),
+        201: apiResultSchema(systemUserSchema),
       },
       metadata,
       summary: `创建${baseSummary}`,
@@ -45,7 +51,7 @@ export const sysUser = c.router(
       responses: {
         200: apiResultSchema(
           z.object({
-            list: selectSysUserSchema
+            list: selectSystemUserSchema
               .omit({ password: true })
               .merge(
                 z.object({
@@ -71,7 +77,7 @@ export const sysUser = c.router(
       path: `/${basePath}/:id`,
       pathParams: z.object({ id: numericString(z.number()) }),
       responses: {
-        200: apiResultSchema(selectSysUserSchema.omit({ password: true })),
+        200: apiResultSchema(systemUserSchema),
       },
       metadata,
       summary: `根据id获取某个${baseSummary}`,
@@ -81,9 +87,9 @@ export const sysUser = c.router(
       method: "PATCH",
       path: `/${basePath}/:id`,
       pathParams: z.object({ id: numericString(z.number()) }),
-      body: insertSysUserSchema.omit({ password: true }).partial(),
+      body: insertSystemUserSchema.omit({ password: true }).partial(),
       responses: {
-        200: apiResultSchema(selectSysUserSchema.omit({ password: true })),
+        200: apiResultSchema(systemUserSchema),
       },
       metadata,
       summary: `更新某个${baseSummary}`,
@@ -95,7 +101,7 @@ export const sysUser = c.router(
       pathParams: z.object({ id: numericString(z.number()) }),
       body: z.any(),
       responses: {
-        200: apiResultSchema(selectSysUserSchema.omit({ password: true })),
+        200: apiResultSchema(systemUserSchema),
       },
       metadata,
       summary: `删除某个${baseSummary}`,
@@ -130,7 +136,7 @@ export const sysUser = c.router(
       method: "PUT",
       path: `/${basePath}/:id/password`,
       pathParams: z.object({ id: numericString(z.number()) }),
-      body: insertSysUserSchema.pick({ password: true }),
+      body: insertSystemUserSchema.pick({ password: true }),
       responses: {
         200: apiResultSchema(z.null()),
       },
@@ -150,6 +156,6 @@ export const sysUser = c.router(
     },
   },
   {
-    pathPrefix: "/sys",
+    pathPrefix: "/system",
   }
 );

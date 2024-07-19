@@ -1,6 +1,6 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import { insertSysDeptSchema, selectSysDeptSchema } from "../../drizzle";
+import { insertSystemDeptSchema, selectSystemDeptSchema } from "../../../drizzle";
 import {
   apiResultSchema,
   baseStatusSchema,
@@ -16,15 +16,15 @@ const metadata = {
 const basePath = "depts";
 const baseSummary = "系统部门";
 
-export const sysDept = c.router(
+export const systemDept = c.router(
   {
     // 创建
     create: {
       method: "POST",
       path: `/${basePath}`,
-      body: insertSysDeptSchema,
+      body: insertSystemDeptSchema,
       responses: {
-        201: apiResultSchema(selectSysDeptSchema),
+        201: apiResultSchema(selectSystemDeptSchema),
       },
       metadata,
       summary: `创建${baseSummary}`,
@@ -35,7 +35,7 @@ export const sysDept = c.router(
       path: `/${basePath}`,
       query: z.object({ name: z.string().optional() }).merge(baseStatusSchema),
       responses: {
-        200: apiResultSchema(selectSysDeptSchema.array()),
+        200: apiResultSchema(selectSystemDeptSchema.array()),
       },
       metadata,
       summary: `获取所有${baseSummary}`,
@@ -46,7 +46,7 @@ export const sysDept = c.router(
       path: `/${basePath}/:id`,
       pathParams: z.object({ id: numericString(z.number()) }),
       responses: {
-        200: apiResultSchema(selectSysDeptSchema),
+        200: apiResultSchema(selectSystemDeptSchema),
       },
       metadata,
       summary: `根据id获取某个${baseSummary}`,
@@ -56,9 +56,9 @@ export const sysDept = c.router(
       method: "PATCH",
       path: `/${basePath}/:id`,
       pathParams: z.object({ id: numericString(z.number()) }),
-      body: insertSysDeptSchema.partial(),
+      body: insertSystemDeptSchema.partial(),
       responses: {
-        200: apiResultSchema(selectSysDeptSchema),
+        200: apiResultSchema(selectSystemDeptSchema),
       },
       metadata,
       summary: `更新某个${baseSummary}`,
@@ -70,7 +70,7 @@ export const sysDept = c.router(
       pathParams: z.object({ id: numericString(z.number()) }),
       body: z.any(),
       responses: {
-        200: apiResultSchema(selectSysDeptSchema),
+        200: apiResultSchema(selectSystemDeptSchema),
       },
       metadata,
       summary: `删除某个${baseSummary}`,
@@ -91,6 +91,6 @@ export const sysDept = c.router(
     },
   },
   {
-    pathPrefix: "/sys",
+    pathPrefix: "/system",
   }
 );

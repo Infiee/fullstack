@@ -17,8 +17,7 @@
   "main": "./dist/index.js",
   "exports": {
     ".": "./dist/index.js",
-    "./src": "./src/index.ts",
-    "./src/contract": "./src/contract.ts"
+    "./src": "./src/index.ts"
   },
   "keywords": [],
   "author": "",

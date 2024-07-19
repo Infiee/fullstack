@@ -1,6 +1,6 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import { insertSysMenuSchema, selectSysMenuSchema } from "../../drizzle";
+import { insertSystemMenuSchema, selectSystemMenuSchema } from "../../../drizzle";
 import {
   RouterMetadata,
   apiResultSchema,
@@ -15,15 +15,15 @@ const metadata = {
 const basePath = "menus";
 const baseSummary = "系统菜单";
 
-export const sysMenu = c.router(
+export const systemMenu = c.router(
   {
     // 创建菜单
     create: {
       method: "POST",
       path: `/${basePath}`,
-      body: insertSysMenuSchema.omit({ id: true }),
+      body: insertSystemMenuSchema.omit({ id: true }),
       responses: {
-        201: apiResultSchema(selectSysMenuSchema),
+        201: apiResultSchema(selectSystemMenuSchema),
       },
       metadata,
       summary: `创建${baseSummary}`,
@@ -33,7 +33,7 @@ export const sysMenu = c.router(
       method: "GET",
       path: `/${basePath}`,
       responses: {
-        200: apiResultSchema(z.array(selectSysMenuSchema)),
+        200: apiResultSchema(z.array(selectSystemMenuSchema)),
       },
       metadata,
       summary: `获取所有${baseSummary}`,
@@ -44,7 +44,7 @@ export const sysMenu = c.router(
       path: `/${basePath}/:id`,
       pathParams: z.object({ id: numericString(z.number()) }),
       responses: {
-        200: apiResultSchema(selectSysMenuSchema),
+        200: apiResultSchema(selectSystemMenuSchema),
       },
       metadata,
       summary: `获取某个${baseSummary}`,
@@ -54,9 +54,9 @@ export const sysMenu = c.router(
       method: "PATCH",
       path: `/${basePath}/:id`,
       pathParams: z.object({ id: numericString(z.number()) }),
-      body: insertSysMenuSchema.omit({ id: true }).partial(),
+      body: insertSystemMenuSchema.omit({ id: true }).partial(),
       responses: {
-        200: apiResultSchema(selectSysMenuSchema),
+        200: apiResultSchema(selectSystemMenuSchema),
       },
       metadata,
       summary: `更新某个${baseSummary}`,
@@ -75,6 +75,6 @@ export const sysMenu = c.router(
     },
   },
   {
-    pathPrefix: "/sys",
+    pathPrefix: "/system",
   }
 );

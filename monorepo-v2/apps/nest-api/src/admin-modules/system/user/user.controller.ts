@@ -1,5 +1,5 @@
 import { Controller, UseGuards } from '@nestjs/common';
-import { UserService } from './user.service';
+import { SystemUserService } from './user.service';
 import { TsRestHandler, tsRestHandler } from '@ts-rest/nest';
 import { contract } from '@repo/shared';
 import { AuthGuard } from '@/core/guard/auth.guard';
@@ -7,61 +7,64 @@ import { ApiResult } from '@/common/utils/api-result';
 
 @UseGuards(AuthGuard)
 @Controller()
-export class UserController {
-  constructor(private readonly userService: UserService) {}
+export class SystemUserController {
+  constructor(private readonly userService: SystemUserService) {}
 
-  @TsRestHandler(contract.sysUser.create)
+  @TsRestHandler(contract.systemUser.create)
   create() {
-    return tsRestHandler(contract.sysUser.create, async ({ body }) => {
+    return tsRestHandler(contract.systemUser.create, async ({ body }) => {
       const users = await this.userService.create(body);
       return { status: 201, body: ApiResult.ok(users[0], '创建用户成功') };
     });
   }
 
-  @TsRestHandler(contract.sysUser.filterAll)
+  @TsRestHandler(contract.systemUser.filterAll)
   filterAll() {
-    return tsRestHandler(contract.sysUser.filterAll, async ({ query }) => {
+    return tsRestHandler(contract.systemUser.filterAll, async ({ query }) => {
       const res = await this.userService.filterAll(query);
       return { status: 200, body: ApiResult.ok(res) };
     });
   }
 
-  @TsRestHandler(contract.sysUser.findById)
+  @TsRestHandler(contract.systemUser.findById)
   findById() {
-    return tsRestHandler(contract.sysUser.findById, async ({ params }) => {
+    return tsRestHandler(contract.systemUser.findById, async ({ params }) => {
       const users = await this.userService.findById(params.id);
       return { status: 200, body: ApiResult.ok(users[0]) };
     });
   }
 
-  @TsRestHandler(contract.sysUser.update)
+  @TsRestHandler(contract.systemUser.update)
   update() {
-    return tsRestHandler(contract.sysUser.update, async ({ params, body }) => {
-      const users = await this.userService.update(params.id, body);
-      return { status: 200, body: ApiResult.ok(users[0]) };
-    });
+    return tsRestHandler(
+      contract.systemUser.update,
+      async ({ params, body }) => {
+        const users = await this.userService.update(params.id, body);
+        return { status: 200, body: ApiResult.ok(users[0]) };
+      },
+    );
   }
 
-  @TsRestHandler(contract.sysUser.remove)
+  @TsRestHandler(contract.systemUser.remove)
   remove() {
-    return tsRestHandler(contract.sysUser.remove, async ({ params }) => {
+    return tsRestHandler(contract.systemUser.remove, async ({ params }) => {
       const users = await this.userService.remove(params.id);
       return { status: 200, body: ApiResult.ok(users[0]) };
     });
   }
 
-  @TsRestHandler(contract.sysUser.batchRemove)
+  @TsRestHandler(contract.systemUser.batchRemove)
   batchRemove() {
-    return tsRestHandler(contract.sysUser.batchRemove, async ({ body }) => {
+    return tsRestHandler(contract.systemUser.batchRemove, async ({ body }) => {
       await this.userService.batchRemove(body.ids);
       return { status: 200, body: ApiResult.ok(null) };
     });
   }
 
-  @TsRestHandler(contract.sysUser.assignRole)
+  @TsRestHandler(contract.systemUser.assignRole)
   assignRole() {
     return tsRestHandler(
-      contract.sysUser.assignRole,
+      contract.systemUser.assignRole,
       async ({ params, body }) => {
         await this.userService.assignRole(params.id, body.roleIds);
         return {
@@ -72,10 +75,10 @@ export class UserController {
     );
   }
 
-  @TsRestHandler(contract.sysUser.resetPassword)
+  @TsRestHandler(contract.systemUser.resetPassword)
   resetPassword() {
     return tsRestHandler(
-      contract.sysUser.resetPassword,
+      contract.systemUser.resetPassword,
       async ({ params, body }) => {
         await this.userService.resetPassword(params.id, body);
         return { status: 200, body: ApiResult.ok(null, '重置密码成功') };
@@ -83,9 +86,9 @@ export class UserController {
     );
   }
 
-  @TsRestHandler(contract.sysUser.getRoleIds)
+  @TsRestHandler(contract.systemUser.getRoleIds)
   getRoleIds() {
-    return tsRestHandler(contract.sysUser.getRoleIds, async ({ params }) => {
+    return tsRestHandler(contract.systemUser.getRoleIds, async ({ params }) => {
       const roleIds = await this.userService.getRoleIds(params.id);
       return {
         status: 200,

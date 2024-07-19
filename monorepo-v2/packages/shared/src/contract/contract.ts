@@ -1,11 +1,11 @@
 import { initContract } from "@ts-rest/core";
-import { sysModule } from "./admin/sys";
+import { systemModule } from "./admin/system";
 
 const c = initContract();
 
 export const contract = c.router(
   {
-    ...sysModule,
+    ...systemModule,
   },
   {
     pathPrefix: "/api",
@@ -14,3 +14,7 @@ export const contract = c.router(
     commonResponses: {},
   }
 );
+
+export * from "./common/enum";
+export * from "./common/common";
+export * from "./admin/system";

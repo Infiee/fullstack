@@ -1,10 +1,10 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 import {
-  insertSysRoleSchema,
-  selectSysMenuSchema,
-  selectSysRoleSchema,
-} from "../../drizzle";
+  insertSystemRoleSchema,
+  selectSystemMenuSchema,
+  selectSystemRoleSchema,
+} from "../../../drizzle";
 import {
   baseStatusSchema,
   RouterMetadata,
@@ -21,22 +21,22 @@ const metadata = {
 const basePath = "roles";
 const baseSummary = "系统角色";
 
-const sysRoleSchema = insertSysRoleSchema.extend({
+const systemRoleSchema = insertSystemRoleSchema.extend({
   name: z.string().optional().default("测试"),
   code: z.string().optional().default("test"),
   remark: z.string().optional().default("测试角色"),
   sort: z.coerce.number().optional().default(0),
 });
 
-export const sysRole = c.router(
+export const systemRole = c.router(
   {
     // 创建角色
     create: {
       method: "POST",
       path: `/${basePath}`,
-      body: sysRoleSchema.omit({ id: true }),
+      body: systemRoleSchema.omit({ id: true }),
       responses: {
-        201: apiResultSchema(selectSysRoleSchema),
+        201: apiResultSchema(selectSystemRoleSchema),
       },
       metadata,
       summary: `创建${baseSummary}`,
@@ -46,7 +46,7 @@ export const sysRole = c.router(
       method: "GET",
       path: `/${basePath}`,
       responses: {
-        200: apiResultSchema(selectSysRoleSchema.array()),
+        200: apiResultSchema(selectSystemRoleSchema.array()),
       },
       metadata,
       summary: `获取所有${baseSummary}`,
@@ -57,7 +57,7 @@ export const sysRole = c.router(
       path: `/${basePath}/:id`,
       pathParams: z.object({ id: numericString(z.number()) }),
       responses: {
-        200: apiResultSchema(selectSysRoleSchema),
+        200: apiResultSchema(selectSystemRoleSchema),
       },
       metadata,
       summary: `获取某个${baseSummary}`,
@@ -67,9 +67,9 @@ export const sysRole = c.router(
       method: "PATCH",
       path: `/${basePath}/:id`,
       pathParams: z.object({ id: numericString(z.number()) }),
-      body: sysRoleSchema.omit({ id: true }).partial(),
+      body: systemRoleSchema.omit({ id: true }).partial(),
       responses: {
-        200: apiResultSchema(selectSysRoleSchema),
+        200: apiResultSchema(selectSystemRoleSchema),
       },
       metadata,
       summary: `更新某个${baseSummary}`,
@@ -128,7 +128,7 @@ export const sysRole = c.router(
       responses: {
         200: apiResultSchema(
           z.object({
-            list: selectSysRoleSchema.array(),
+            list: selectSystemRoleSchema.array(),
             total: z.number(),
           })
         ),
@@ -142,7 +142,7 @@ export const sysRole = c.router(
       path: `/${basePath}/:id/menus`,
       pathParams: z.object({ id: numericString(z.number()) }),
       responses: {
-        200: apiResultSchema(selectSysMenuSchema.array()),
+        200: apiResultSchema(selectSystemMenuSchema.array()),
       },
       metadata,
       summary: `获取系统菜单、${baseSummary}`,
@@ -160,6 +160,6 @@ export const sysRole = c.router(
     },
   },
   {
-    pathPrefix: "/sys",
+    pathPrefix: "/system",
   }
 );

@@ -11,10 +11,10 @@ import {
 } from "drizzle-orm/pg-core";
 import { baseStatusColumns, baseDateColumns } from "../../base.schema";
 
-// const genderEnum = pgEnum('gender', SysGenderEnum);
+// const genderEnum = pgEnum('gender', SystemGenderEnum);
 
 /** 用户表 */
-export const sysUser = pgTable("sys_user", {
+export const systemUser = pgTable("system_user", {
   id: serial("id").primaryKey(),
   avatar: text("avatar"),
   username: text("user_name").notNull(),
@@ -22,19 +22,19 @@ export const sysUser = pgTable("sys_user", {
   password: text("password").notNull(),
   phone: text("phone").unique(),
   email: text("email").unique(),
-  // gender: text("gender", { enum: SysGenderEnum }),
+  // gender: text("gender", { enum: SystemGenderEnum }),
   // gender: genderEnum('gender'),
   sex: smallint("sex"),
   remark: text("remark"),
 
-  deptId: integer("dept_id").references(() => sysDept.id),
+  deptId: integer("dept_id").references(() => systemDept.id),
 
   ...baseStatusColumns,
   ...baseDateColumns,
 });
 
 /** 角色表 */
-export const sysRole = pgTable("sys_role", {
+export const systemRole = pgTable("system_role", {
   id: serial("id").primaryKey(),
   // 角色名称
   name: text("name").notNull(),
@@ -46,13 +46,13 @@ export const sysRole = pgTable("sys_role", {
 });
 
 /** 菜单表 */
-export const sysMenu = pgTable("sys_menu", {
+export const systemMenu = pgTable("system_menu", {
   id: serial("id").primaryKey(),
   // parentId: integer('parent_id').default(0),
   // id自引用
-  parentId: integer("parent_id").references((): AnyPgColumn => sysMenu.id),
+  parentId: integer("parent_id").references((): AnyPgColumn => systemMenu.id),
   title: text("title").notNull().unique(),
-  // menuType: text("menu_type", { enum: SysMenuTypeEnum }).notNull(),
+  // menuType: text("menu_type", { enum: SystemMenuTypeEnum }).notNull(),
   // 菜单类型（0代表菜单、1代表iframe、2代表外链、3代表按钮）
   menuType: smallint("menu_type").notNull(),
   // 权限标识
@@ -94,9 +94,9 @@ export const sysMenu = pgTable("sys_menu", {
 });
 
 /** 部门表 */
-export const sysDept = pgTable("sys_dept", {
+export const systemDept = pgTable("system_dept", {
   id: serial("id").primaryKey(),
-  parentId: integer("parent_id").references((): AnyPgColumn => sysDept.id),
+  parentId: integer("parent_id").references((): AnyPgColumn => systemDept.id),
   name: text("name").notNull(),
   phone: text("phone"),
   principal: text("principal"),
@@ -110,12 +110,12 @@ export const sysDept = pgTable("sys_dept", {
 });
 
 /** 登录日志表 */
-export const sysLoginLog = pgTable("sys_login_log", {
+export const systemLoginLog = pgTable("system_login_log", {
   id: serial("id").primaryKey(),
   username: text("user_name").notNull(),
   ip: text("ip"),
   address: text("address"),
-  sys: text("sys"),
+  system: text("system"),
   browser: text("browser"),
   behavior: text("behavior"),
   status: smallint("status").notNull(),
@@ -124,18 +124,18 @@ export const sysLoginLog = pgTable("sys_login_log", {
 
 /* --------------------- 关联表 --------------------------- */
 /** 用户 - 角色表 */
-export const sysUserToRole = pgTable(
-  "sys_user_to_role",
+export const systemUserToRole = pgTable(
+  "system_user_to_role",
   {
     userId: integer("user_id")
       .notNull()
-      .references(() => sysUser.id, {
+      .references(() => systemUser.id, {
         onUpdate: "cascade",
         onDelete: "cascade",
       }),
     roleId: integer("role_id")
       .notNull()
-      .references(() => sysRole.id, {
+      .references(() => systemRole.id, {
         onUpdate: "cascade",
         onDelete: "cascade",
       }),
@@ -146,15 +146,15 @@ export const sysUserToRole = pgTable(
 );
 
 /** 菜单 - 角色表 */
-export const sysMenuToRole = pgTable(
-  "sys_menu_to_role",
+export const systemMenuToRole = pgTable(
+  "system_menu_to_role",
   {
     menuId: integer("menu_id")
       .notNull()
-      .references(() => sysMenu.id, { onDelete: "cascade" }),
+      .references(() => systemMenu.id, { onDelete: "cascade" }),
     roleId: integer("role_id")
       .notNull()
-      .references(() => sysRole.id, { onDelete: "cascade" }),
+      .references(() => systemRole.id, { onDelete: "cascade" }),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.menuId, t.roleId] }),
@@ -162,15 +162,15 @@ export const sysMenuToRole = pgTable(
 );
 
 /** 部门 - 角色表 */
-export const sysDeptToRole = pgTable(
-  "sys_dept_to_role",
+export const systemDeptToRole = pgTable(
+  "system_dept_to_role",
   {
     deptId: integer("dept_id")
       .notNull()
-      .references(() => sysDept.id, { onDelete: "cascade" }),
+      .references(() => systemDept.id, { onDelete: "cascade" }),
     roleId: integer("role_id")
       .notNull()
-      .references(() => sysRole.id, { onDelete: "cascade" }),
+      .references(() => systemRole.id, { onDelete: "cascade" }),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.deptId, t.roleId] }),
