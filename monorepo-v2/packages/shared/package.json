@@ -24,17 +24,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@ts-rest/core": "^3.45.2",
+    "@ts-rest/core": "^3.49.3",
     "@node-rs/bcrypt": "^1.10.4",
-    "drizzle-orm": "^0.31.2",
+    "drizzle-orm": "^0.33.0",
     "drizzle-zod": "^0.5.1",
     "pg": "^8.12.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "typescript": "^5.4.5",
+    "typescript": "^5.5.4",
     "@types/pg": "^8.11.6",
-    "drizzle-kit": "^0.22.7",
-    "tsx": "^4.16.2"
+    "drizzle-kit": "^0.24.0",
+    "tsx": "^4.17.0"
   }
 }
