@@ -1,3 +1,4 @@
+import ms from 'ms';
 import { z } from 'zod';
 
 const adminList = [1];
@@ -20,7 +21,7 @@ export const envConfigSchema = z.object({
   JWT_REFRESH_EXPIRESIN: z.string(),
 
   // 验证码
-  CAPTCHA_EXPIRESIN: z.coerce.number(),
+  CAPTCHA_EXPIRE: z.coerce.number().default(ms('5m')),
 
   // 管理员配置
   ADMIN_LIST: z.array(z.coerce.number()).default(adminList),

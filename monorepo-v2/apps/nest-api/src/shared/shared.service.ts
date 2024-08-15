@@ -6,7 +6,7 @@ import { JwtService, JwtVerifyOptions } from '@nestjs/jwt';
 import ms from 'ms';
 import { AppConfigService } from '@/config/app-config.service';
 import { RedisCacheService } from '@/shared/cache/redis-cache.service';
-import { SYS_USER_ACCESS_TOKEN_KEY } from '@/common/constants/admin-cache.constant';
+import { RedisKeys } from '@/common/constants/redis.constant';
 
 @Injectable()
 export class SharedService {
@@ -76,7 +76,7 @@ export class SharedService {
     // TODO: 如果token有效期小于5分钟则进行续期
     if (remainingTime < threshold) {
       await this.redis.set(
-        `${SYS_USER_ACCESS_TOKEN_KEY}:${payload.id}`,
+        `${RedisKeys.SYS_ACCESS_TOKEN_KEY}:${payload.id}`,
         token,
         ms(this.config.get('JWT_EXPIRESIN')),
       );

@@ -6,6 +6,11 @@ import { AuthGuard } from '@/core/guard/auth.guard';
 import { ApiResult } from '@/common/utils/api-result';
 import { FastifyRequest } from 'fastify';
 import { UAParser } from 'ua-parser-js';
+import { getClientIp } from '@supercharge/request-ip';
+import {
+  getRealAddressByIp,
+  getClientIP as getIp,
+} from '@/common/utils/ip2region/index';
 
 @Controller()
 export class SystemAuthController {
@@ -24,11 +29,13 @@ export class SystemAuthController {
     return tsRestHandler(contract.systemAuth.login, async ({ body }) => {
       const ua = req.headers['user-agent'];
       const parser = UAParser(ua);
+      const realIp = getClientIp(req);
+      const address = realIp ? await getRealAddressByIp(realIp) : '';
 
       const clientInfo = {
-        ip: req.realIp,
+        ip: realIp ? getIp(realIp) : '',
         browser: parser.browser.name + ' ' + parser.browser.version,
-        address: '',
+        address: address,
         system: parser.os.name + ' ' + parser.os.version,
         behavior: '账号登录',
       };

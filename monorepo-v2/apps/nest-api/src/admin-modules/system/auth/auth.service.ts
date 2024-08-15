@@ -19,8 +19,8 @@ import { ApiException } from '@/core/filter/api-exception';
 import { ErrorCode } from '@/common/constants/err-code.constant';
 import { FastifyRequest } from 'fastify';
 import { ADMIN_PERMISSION } from '@/common/constants/admin.constant';
-import { CacheEnum } from '@/common/enum/cache.enum';
 import { DB_CLIENT, DrizzleDB, schemas } from '@/shared/drizzle/drizzle.module';
+import { RedisKeys, getCacheExipre } from '@/common/constants/redis.constant';
 
 @Injectable()
 export class SystemAuthService {
@@ -36,12 +36,12 @@ export class SystemAuthService {
   /** 生成验证码 */
   async generateCaptcha() {
     const captcha = await this.sharedService.generateCaptcha();
-    const uuid = await generateHash();
+    const uuid = generateHash();
 
     await this.redis.set(
-      `${CacheEnum.CAPTCHA_IMAGE_KEY}:${uuid}`,
+      `${RedisKeys.SYS_CAPTCHA_KEY}:${uuid}`,
       captcha.text,
-      this.config.get('CAPTCHA_EXPIRESIN'),
+      this.config.get('CAPTCHA_EXPIRE'),
     );
     const result = {
       // img: svgToMiniDataURI(captcha.data),
@@ -52,7 +52,7 @@ export class SystemAuthService {
       uuid,
     };
     // TODO: 开发环境：返回结果
-    if (this.config.isDevEnv()) {
+    if (this.config.isDevEnv) {
       return { ...result, captcha: captcha.text };
     }
     return result;
@@ -61,13 +61,13 @@ export class SystemAuthService {
   /** 校验验证码 */
   async validateCaptcha(uuid: string, code: string) {
     const text = await this.redis.get<string>(
-      `${CacheEnum.CAPTCHA_IMAGE_KEY}:${uuid}`,
+      `${RedisKeys.SYS_CAPTCHA_KEY}:${uuid}`,
     );
     if (!text) throw new ApiException(ErrorCode.CAPTCHA_IN_VALID);
     if (code.toLowerCase() !== text.toLowerCase()) {
       throw new ApiException(ErrorCode.CAPTCHA_ERROR);
     }
-    await this.redis.del(`${CacheEnum.CAPTCHA_IMAGE_KEY}:${uuid}`);
+    await this.redis.del(`${RedisKeys.SYS_CAPTCHA_KEY}:${uuid}`);
   }
 
   /** 登录 */
@@ -87,15 +87,20 @@ export class SystemAuthService {
     const uid = generateHash();
     const token = await this.setToken(user, uid);
     const metaData = {
-      ...clientInfo,
+      meta: { ...clientInfo },
       ...user,
     };
     // TODO: 单用户单端登录
     // await this.redis.persistSet(`${CacheEnum.PERSIST_SYSTEM_USER_KEY}:${user.id}`, user);
     // TODO: 单用户多端登录
-    await this.redis.persistSet(
-      `${CacheEnum.PERSIST_SYSTEM_USER_KEY}:${user.id}`,
+    // await this.redis.persistSet(
+    //   `${CacheEnum.PERSIST_SYSTEM_USER_KEY}:${user.id}`,
+    //   metaData,
+    // );
+    this.redis.set(
+      `${RedisKeys.SYS_USER_KEY}:${user.id}`,
       metaData,
+      getCacheExipre('SYS_USER_KEY'),
     );
 
     const roles = await this.userService.getRoles(user.id);
@@ -122,13 +127,13 @@ export class SystemAuthService {
     });
     // 获取缓存的token
     const cacheRefreshToken = await this.redis.get<string>(
-      `${CacheEnum.REFRESH_TOKEN_KEY}:${payload.id}`,
+      `${RedisKeys.SYS_REFRESH_TOKEN_KEY}:${payload.id}`,
     );
     if (refreshToken !== cacheRefreshToken) {
       throw new UnauthorizedException('refreshToken已失效,请重新登录');
     }
     const user = await this.redis.get<SelectSystemUserResult>(
-      `${CacheEnum.PERSIST_SYSTEM_USER_KEY}:${payload.id}`,
+      `${RedisKeys.SYS_USER_KEY}:${payload.id}`,
     );
     if (!user) throw new ApiException('redis用户不存在');
     const uid = await generateHash();
@@ -151,12 +156,12 @@ export class SystemAuthService {
     const expires = this.jwtService.decode<JWT.VerifyPayload>(accessToken);
     console.log('decode expires--', expires);
     this.redis.set(
-      `${CacheEnum.ACCESS_TOKEN_KEY}:${user.id}:${uuid}`,
+      `${RedisKeys.SYS_ACCESS_TOKEN_KEY}:${user.id}:${uuid}`,
       accessToken,
       ms(this.config.get('JWT_EXPIRESIN')),
     );
     this.redis.set(
-      `${CacheEnum.REFRESH_TOKEN_KEY}:${user.id}:${uuid}`,
+      `${RedisKeys.SYS_REFRESH_TOKEN_KEY}:${user.id}:${uuid}`,
       refreshToken,
       ms(this.config.get('JWT_REFRESH_EXPIRESIN')),
     );
