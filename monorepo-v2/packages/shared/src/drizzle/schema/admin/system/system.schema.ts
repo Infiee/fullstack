@@ -17,14 +17,15 @@ import { baseStatusColumns, baseDateColumns } from "../../base.schema";
 export const systemUser = pgTable("system_user", {
   id: serial("id").primaryKey(),
   avatar: text("avatar"),
-  username: text("user_name").notNull(),
-  nickname: text("nick_name"),
+  username: text("username").notNull(),
+  nickname: text("nickname"),
   password: text("password").notNull(),
   phone: text("phone").unique(),
   email: text("email").unique(),
   // gender: text("gender", { enum: SystemGenderEnum }),
   // gender: genderEnum('gender'),
-  sex: smallint("sex"),
+  // sex: smallint("sex"),
+  gender: smallint("gender"),
   remark: text("remark"),
 
   deptId: integer("dept_id").references(() => systemDept.id),
@@ -66,7 +67,7 @@ export const systemMenu = pgTable("system_menu", {
   // 菜单icon
   icon: text("icon"),
   // 菜单右侧icon
-  extraIcon: text("extra-icon"),
+  extraIcon: text("extra_icon"),
   // 重定向地址
   redirect: text("redirect"),
   // 进场动画
@@ -80,15 +81,15 @@ export const systemMenu = pgTable("system_menu", {
   // 外链动画
   frameLoading: boolean("frame_loading"),
   // 是否缓存
-  keepAlive: boolean("keepAlive"),
+  keepAlive: boolean("keep_alive"),
   // 是否在菜单显示
-  showLink: boolean("showLink"),
+  showLink: boolean("show_link"),
   // 是否显示父级菜单
-  showParent: boolean("showParent"),
+  showParent: boolean("show_parent"),
   // 固定标签页
-  fixedTag: boolean("fixedTag"),
+  fixedTag: boolean("fixed_tag"),
   // 隐藏标签页
-  hiddenTag: boolean("hiddenTag"),
+  hiddenTag: boolean("hidden_tag"),
   // 排序
   rank: integer("rank").notNull().default(0),
 });
