@@ -1,0 +1,21 @@
+# 最新废弃了版本 https://docs.docker.com/reference/compose-file/version-and-name/
+# version: "3.8"
+
+services:
+  nest-api:
+    container_name: nest-api
+    build:
+      context: .
+      dockerfile: ./apps/nest-api/Dockerfile
+    image: nest-api:${VERSION:-latest} 
+    restart: always
+    ports:
+      - 3000:3000
+    networks:
+      - turbo_network
+
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname
+networks:
+  turbo_network:
+    external: true

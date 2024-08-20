@@ -2,6 +2,7 @@
   "name": "nest-admin",
   "private": true,
   "scripts": {
+    "docker": "VERSION=v0.0.2 docker-compose up -d",
     "build": "turbo build",
     "dev": "turbo dev",
     "dev:app": "pnpm compile:pkg && turbo dev",
@@ -10,9 +11,9 @@
     "clean:dist": "rm -rf ./**/*/.turbo && rm -rf ./**/*/dist"
   },
   "devDependencies": {
-    "turbo": "^2.0.12"
+    "turbo": "^2.0.14"
   },
-  "packageManager": "pnpm@9.5.0",
+  "packageManager": "pnpm@9.7.1",
   "engines": {
     "node": ">=20"
   }

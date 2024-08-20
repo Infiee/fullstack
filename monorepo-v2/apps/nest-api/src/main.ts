@@ -18,7 +18,7 @@ async function bootstrap() {
     }),
   );
   await setupApp(app);
-  await app.listen(port);
-  console.log(`app 运行在: http://localhost:${port}/openapi`);
+  await app.listen(port, '0.0.0.0');
+  console.log(`app 运行在host: http://localhost:${port}/openapi`);
 }
 bootstrap();
