@@ -2,7 +2,7 @@
   "name": "nest-admin",
   "private": true,
   "scripts": {
-    "docker": "VERSION=v0.0.2 docker-compose up -d",
+    "docker": "VERSION=v0.0.4 docker-compose up -d",
     "build": "turbo build",
     "dev": "turbo dev",
     "dev:app": "pnpm compile:pkg && turbo dev",
