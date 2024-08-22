@@ -10,7 +10,7 @@
     "compile:pkg": "turbo compile:pkg",
     "clean": "rm -rf ./.turbo && rm -rf ./node_modules && rm -rf ./**/*/node_modules && rm -rf ./**/*/.turbo && rm -rf ./**/*/dist",
     "clean:dist": "rm -rf ./**/*/.turbo && rm -rf ./**/*/dist",
-    "deploy:server": "turbo prune nest-api admin-ui --out-dir=./nest-app"
+    "deploy:server": "turbo prune nest-api admin-ui --out-dir=./nest-app && node ./deploy.mjs"
   },
   "devDependencies": {
     "dotenv": "^16.4.5",
