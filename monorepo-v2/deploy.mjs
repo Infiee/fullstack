@@ -42,6 +42,7 @@ async function upload() {
     sftp.on("upload", (info) => {
       console.log(`上传Listener: ${info.source}`);
     });
+    // const res = await sftp.uploadDir(destDir, SERVER_FTP_SITE_DIR);
     const res = await sftp.fastPut(destDir, SERVER_FTP_SITE_DIR + '/nest-app.tar.gz');
     await sftp.end();
     console.log("上传结果", res);
@@ -79,7 +80,7 @@ function deploy() {
 async function bootstrap() {
   await zipFolder();
   await upload();
-  // clearUploadFile();
+  clearUploadFile();
   deploy();
 }
 

@@ -10,7 +10,8 @@
     "compile:pkg": "turbo compile:pkg",
     "clean": "rm -rf ./.turbo && rm -rf ./node_modules && rm -rf ./**/*/node_modules && rm -rf ./**/*/.turbo && rm -rf ./**/*/dist",
     "clean:dist": "rm -rf ./**/*/.turbo && rm -rf ./**/*/dist",
-    "deploy:server": "turbo prune nest-api admin-ui --out-dir=./nest-app && node ./deploy.mjs"
+    "deploy:server": "turbo prune nest-api admin-ui --out-dir=./nest-app && node ./deploy.mjs",
+    "run:api": "pm2 startOrRestart ecosystem.json --env production"
   },
   "devDependencies": {
     "compressing": "^1.10.1",

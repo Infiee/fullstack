@@ -1,0 +1,12 @@
+{
+  "apps": [
+    {
+      "name": "nest-api",
+      "cwd": "./apps/nest-api/",
+      "exec_mode": "cluster",
+      "script": "pnpm",
+      "args": "start:prod",
+      "instances": "max"
+    }
+  ]
+}
