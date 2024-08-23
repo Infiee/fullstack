@@ -5,10 +5,8 @@ import path from "node:path";
 import Client from "ssh2-sftp-client";
 import "dotenv/config";
 import { Client as SSHClient } from "ssh2";
-
-const src = path.resolve("nest-app");
-
-let sftp = new Client();
+import compressing from "compressing";
+import fs from "node:fs";
 
 const {
   SERVER_HOST,
@@ -25,22 +23,36 @@ const connectOption = {
   password: SERVER_PASSWORD,
 };
 
+const sourceDir = path.resolve("./nest-app");
+const destDir = "./nest-app.tar.gz";
+
+async function zipFolder() {
+  return compressing.tgz.compressDir(sourceDir, destDir);
+}
+
+function clearUploadFile() {
+  fs.rmSync(sourceDir, { recursive: true, force: true });
+  fs.rmSync(destDir, { recursive: true, force: true });
+}
+
 async function upload() {
+  let sftp = new Client();
   try {
     await sftp.connect(connectOption);
     sftp.on("upload", (info) => {
       console.log(`上传Listener: ${info.source}`);
     });
-    const res = await sftp.uploadDir(src, SERVER_FTP_SITE_DIR);
+    const res = await sftp.fastPut(destDir, SERVER_FTP_SITE_DIR + '/nest-app.tar.gz');
     await sftp.end();
     console.log("上传结果", res);
+    clearUploadFile();
   } catch (error) {
     console.log("上传错误", error);
     await sftp.end();
   }
 }
 
-function build() {
+function deploy() {
   const ssh = new SSHClient();
   ssh
     .on("ready", () => {
@@ -65,8 +77,10 @@ function build() {
 }
 
 async function bootstrap() {
+  await zipFolder();
   await upload();
-  build();
+  // clearUploadFile();
+  deploy();
 }
 
 bootstrap();

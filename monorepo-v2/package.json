@@ -13,6 +13,7 @@
     "deploy:server": "turbo prune nest-api admin-ui --out-dir=./nest-app && node ./deploy.mjs"
   },
   "devDependencies": {
+    "compressing": "^1.10.1",
     "dotenv": "^16.4.5",
     "ssh2": "^1.15.0",
     "ssh2-sftp-client": "^11.0.0",
